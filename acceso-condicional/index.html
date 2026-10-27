@@ -32,10 +32,28 @@
       overflow: hidden;
     }
 
+    /* Logo NubeIT en la esquina superior izquierda */
+    .nubeit-logo {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      height: 48px;
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+      z-index: 20;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.08));
+      transition: opacity 0.2s;
+    }
+    .nubeit-logo:hover {
+      opacity: 0.9;
+    }
+
     .case-header {
       text-align: center;
       margin-bottom: 8px;
       flex-shrink: 0;
+      padding-left: 120px; /* espacio para el logo, sin desplazar demasiado */
     }
 
     .case-badge {
@@ -434,15 +452,42 @@
         height: auto;
         min-height: 100vh;
       }
+      .nubeit-logo {
+        height: 36px;
+        top: 10px;
+        left: 12px;
+      }
+      .case-header {
+        padding-left: 80px;
+        padding-right: 10px;
+      }
       .diagram-container { flex-wrap: wrap; justify-content: center; gap: 25px; }
       .connectors { display: none; }
       .col-verify { align-items: center; padding-left: 0; }
+    }
+
+    @media (max-width: 500px) {
+      .nubeit-logo {
+        height: 30px;
+        top: 8px;
+        left: 8px;
+      }
+      .case-header {
+        padding-left: 60px;
+      }
+      .case-badge {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+      }
     }
   </style>
 </head>
 <body>
 <div class="card">
   
+  <!-- Logo NubeIT en la esquina superior izquierda -->
+  <img src="https://www.nubeit.co/img/Logo_NubeIT.png" alt="NubeIT" class="nubeit-logo" />
+
   <div class="case-header">
     <div class="case-badge neutral" id="caseBadge">🚀 Demostración de Acceso Condicional (Zero Trust)</div>
   </div>
