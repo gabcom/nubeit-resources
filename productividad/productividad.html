@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft 365 Business: Basic vs Standard vs Premium · Nube IT</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+        --primary-blue: #0A2540;
+        --light-blue: #1E3A8A;
+        --secondary-blue: #1A5B9C;
+        --accent-orange: #F26522;
+        --bg-light: #F8F9FA;
+        --text-dark: #1E293B;
+        --text-black: #000000;
+        --text-muted: #64748B;
+        --border-color: #E2E8F0;
+        --tag-essential-bg: #FFEDD5;
+        --tag-essential-text: #7C2D12;
+        --tag-essential-border: #FDBA74;
+        --tag-basic-bg: #E0F2FE;
+        --tag-basic-text: #075985;
+        --tag-basic-border: #7DD3FC;
+        --tag-standard-bg: #DCFCE7;
+        --tag-standard-text: #166534;
+        --tag-standard-border: #86EFAC;
+        --tag-premium-bg: #FEF3C7;
+        --tag-premium-text: #92400E;
+        --tag-premium-border: #FCD34D;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        background-color: #E2E8F0;
+        color: var(--text-dark);
+        line-height: 1.5;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .report-container {
+        max-width: 1200px;
+        width: 100%;
+        background-color: #FFFFFF;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+
+    /* HEADER */
+    .header {
+        position: relative;
+        padding: 30px 40px 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        background-color: #FFFFFF;
+        min-height: 150px;
+        overflow: hidden;
+    }
+    .header-shape {
+        position: absolute; top: 0; right: 0; width: 100%; height: 100%;
+        z-index: 0; pointer-events: none;
+    }
+    .header-shape svg { display: block; width: 100%; height: 100%; }
+    .header-left, .header-right { position: relative; z-index: 3; }
+    .header-left { display: flex; flex-direction: column; gap: 12px; max-width: 55%; }
+    .logo-container { display: flex; align-items: center; text-decoration: none; margin-bottom: 5px; }
+    .logo-container img { height: 45px; width: auto; object-fit: contain; }
+    .header-title h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; line-height: 1.2; color: var(--primary-blue); }
+    .header-title p { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+    .header-right {
+        display: flex; flex-direction: column; align-items: flex-end;
+        justify-content: flex-end; gap: 15px; text-align: right;
+        height: 100%; padding-bottom: 0;
+    }
+    .microsoft-logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; color: white; }
+    .ms-squares { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 18px; height: 18px; }
+    .ms-squares div { width: 100%; height: 100%; }
+    .ms-squares div:nth-child(1) { background-color: #F25022; }
+    .ms-squares div:nth-child(2) { background-color: #7FBA00; }
+    .ms-squares div:nth-child(3) { background-color: #00A4EF; }
+    .ms-squares div:nth-child(4) { background-color: #FFB900; }
+    .header-info { font-size: 12px; color: #E2E8F0; line-height: 1.4; }
+    .header-info strong { color: white; font-weight: 600; }
+
+    /* SECCIONES */
+    .section { padding: 25px 40px; border-bottom: 1px solid var(--border-color); position: relative; z-index: 1; }
+    .section-header { margin-bottom: 20px; }
+    .section-header h3 { font-size: 18px; font-weight: 700; color: var(--primary-blue); margin-bottom: 4px; }
+    .section-header p { font-size: 13px; color: var(--text-muted); }
+
+    /* BLOQUE ANTES DE EMPEZAR */
+    .before-start {
+        background-color: #F5F9FD;
+        border-bottom: 1px solid var(--border-color);
+        padding: 25px 40px;
+    }
+    .before-start h3 { font-size: 18px; font-weight: 700; color: var(--primary-blue); margin-bottom: 15px; }
+    .before-start ul {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 12px 28px;
+        margin-bottom: 20px;
+    }
+    .before-start li {
+        font-size: 13px; color: var(--text-dark);
+        border-left: 3px solid var(--secondary-blue);
+        padding-left: 12px; line-height: 1.4;
+    }
+    .before-start li strong { color: var(--primary-blue); }
+    .before-start .cta-inline {
+        display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+        padding-top: 15px; border-top: 1px dashed var(--border-color);
+    }
+    .before-start .cta-inline p { font-size: 14px; font-weight: 600; color: var(--primary-blue); margin: 0; }
+    .btn-inline {
+        background-color: #CF4B0C; color: white;
+        padding: 8px 18px; border-radius: 6px;
+        font-size: 13px; font-weight: 600; text-decoration: none;
+        display: inline-flex; align-items: center; gap: 6px;
+        transition: background 0.2s;
+    }
+    .btn-inline:hover { background-color: #A63A08; }
+
+    /* TABLA COMPARATIVA */
+    .compare-table-wrap { overflow-x: auto; margin-top: 10px; }
+    table.compare {
+        width: 100%; border-collapse: collapse; font-size: 12px; min-width: 760px;
+    }
+    table.compare th, table.compare td {
+        border: 1px solid var(--border-color); padding: 9px 12px; text-align: left; vertical-align: top;
+    }
+    table.compare thead th {
+        background-color: var(--primary-blue); color: #FFFFFF;
+        font-weight: 700; font-size: 12px; text-align: center;
+    }
+    table.compare thead th:first-child { text-align: left; }
+    table.compare tbody tr:nth-child(even) { background-color: #F8FAFC; }
+    table.compare td.feat { font-weight: 600; color: var(--primary-blue); width: 38%; text-align: left; }
+    table.compare td { text-align: center; }
+    .yes { color: #166534; font-weight: 700; }
+    .no { color: #B91C1C; font-weight: 700; }
+    .note { font-size: 10px; color: var(--text-muted); font-weight: 400; display: block; margin-top: 2px; }
+
+    /* Filas de categoría */
+    table.compare tr.category-row td {
+        background-color: #E8EEF5;
+        color: var(--primary-blue);
+        font-weight: 700;
+        font-size: 12px;
+        text-align: left;
+        padding: 8px 12px;
+        border-left: 4px solid var(--secondary-blue);
+    }
+    table.compare tr.category-row td:not(:first-child) { background-color: #E8EEF5; }
+
+    /* ===== BLOQUES DE TAB CONTROL ===== */
+    .products-tabs-section { padding: 25px 40px; border-bottom: 1px solid var(--border-color); }
+    .products-tabs-section .section-header { margin-bottom: 20px; }
+
+    .tabs-layout {
+        display: flex;
+        gap: 20px;
+        min-height: 480px;
+    }
+
+    .tabs-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 220px;
+        flex-shrink: 0;
+        border-right: 1px solid var(--border-color);
+        padding-right: 16px;
+    }
+
+    .tab-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-align: left;
+        transition: all 0.2s;
+        line-height: 1.3;
+    }
+    .tab-btn:hover {
+        background-color: var(--bg-light);
+        color: var(--light-blue);
+        border-color: var(--border-color);
+    }
+    .tab-btn.active {
+        background-color: #F5F9FD;
+        color: var(--light-blue);
+        border-color: var(--secondary-blue);
+        box-shadow: inset 3px 0 0 var(--secondary-blue);
+    }
+    .tab-btn .tab-icon { font-size: 16px; flex-shrink: 0; }
+    .tab-btn .tab-label { flex: 1; }
+
+    .tabs-panel { flex: 1; min-width: 0; }
+
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.25s ease;
+    }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Área de video */
+    .video-placeholder {
+        background-color: #0A2540;
+        border-radius: 10px;
+        aspect-ratio: 16 / 9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #E2E8F0;
+        gap: 10px;
+        border: 2px dashed rgba(255,255,255,0.2);
+        margin-bottom: 16px;
+        position: relative;
+        overflow: hidden;
+    }
+    .video-placeholder::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(26,91,156,0.3) 0%, rgba(10,37,64,0.8) 100%);
+    }
+    .video-placeholder .play-icon {
+        position: relative; z-index: 1;
+        width: 64px; height: 64px; border-radius: 50%;
+        background-color: rgba(242,101,34,0.9);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; color: white;
+        box-shadow: 0 4px 20px rgba(242,101,34,0.4);
+    }
+    .video-placeholder .video-label {
+        position: relative; z-index: 1;
+        font-size: 13px; font-weight: 600;
+        text-align: center; padding: 0 20px;
+    }
+    .video-placeholder .video-hint {
+        position: relative; z-index: 1;
+        font-size: 11px; opacity: 0.6;
+    }
+    .video-placeholder iframe {
+        position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+    }
+    .video-placeholder.has-video { border: none; background: #000; }
+    .video-placeholder.has-video::before { display: none; }
+    .video-placeholder.has-video .play-icon,
+    .video-placeholder.has-video .video-label,
+    .video-placeholder.has-video .video-hint { display: none; }
+
+    /* Lista de funcionalidades */
+    .features-title {
+        font-size: 14px; font-weight: 700; color: var(--primary-blue);
+        margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .features-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 6px 16px;
+    }
+    .features-list li {
+        font-size: 12px; color: var(--text-dark);
+        padding: 5px 0 5px 20px; position: relative; line-height: 1.4;
+    }
+    .features-list li::before {
+        content: '✓'; position: absolute; left: 0;
+        color: #166534; font-weight: 700; font-size: 12px;
+    }
+
+    /* Etiquetas */
+    .tag {
+        display: inline-block;
+        font-size: 10px; font-weight: 700;
+        padding: 1px 6px; border-radius: 4px;
+        text-transform: uppercase; letter-spacing: 0.3px;
+        margin-left: 6px; vertical-align: middle; border: 1px solid;
+    }
+    .tag-common { background-color: var(--tag-essential-bg); color: var(--tag-essential-text); border-color: var(--tag-essential-border); }
+    .tag-basic { background-color: var(--tag-basic-bg); color: var(--tag-basic-text); border-color: var(--tag-basic-border); }
+    .tag-standard { background-color: var(--tag-standard-bg); color: var(--tag-standard-text); border-color: var(--tag-standard-border); }
+    .tag-premium { background-color: var(--tag-premium-bg); color: var(--tag-premium-text); border-color: var(--tag-premium-border); }
+
+    /* Título de bloque de categoría */
+    .category-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background-color: var(--primary-blue); color: #FFFFFF;
+        font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+        text-transform: uppercase; padding: 6px 14px; border-radius: 20px;
+        margin-bottom: 8px;
+    }
+    .category-badge .badge-icon { font-size: 14px; }
+
+    /* FOOTER CTA */
+    .footer-cta {
+        background-color: #FFF7ED; border-top: 1px solid #FED7AA;
+        padding: 20px 40px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .cta-text { display: flex; align-items: center; gap: 15px; }
+    .cta-text .cta-icon { font-size: 30px; color: var(--accent-orange); font-weight: 800; }
+    .cta-text h4 { font-size: 16px; font-weight: 700; color: var(--primary-blue); }
+    .cta-text p  { font-size: 12px; color: var(--text-muted); }
+    .cta-buttons { display: flex; gap: 10px; }
+    .btn {
+        padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: 600;
+        text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+        cursor: pointer; border: none; transition: background 0.2s;
+    }
+    .btn-primary { background-color: #CF4B0C; color: white; }
+    .btn-primary:hover { background-color: #A63A08; }
+
+    .footer-bottom {
+        background-color: var(--primary-blue); color: white;
+        padding: 15px 40px;
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 12px; gap: 20px; flex-wrap: wrap;
+    }
+    .footer-bottom-left { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .footer-bottom-right a { color: #A0C4E8; text-decoration: none; }
+    .adoption-phases { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #CBD5E1; }
+    .adoption-phases a.phase {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+        padding: 4px 10px; border-radius: 12px; font-weight: 600;
+        white-space: nowrap; color: #E2E8F0; text-decoration: none; transition: all 0.2s;
+    }
+    .adoption-phases a.phase:hover {
+        background: rgba(242, 101, 34, 0.25); border-color: var(--accent-orange);
+        color: #FFFFFF; transform: translateY(-1px);
+    }
+    .adoption-phases a.phase .icon { font-size: 12px; line-height: 1; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+        .header { flex-direction: column; gap: 20px; padding: 25px 20px 20px; min-height: auto; }
+        .header-shape { width: 100%; opacity: 0.1; }
+        .header-left { max-width: 100%; }
+        .header-right { align-items: flex-start; text-align: left; background: #0A2540; padding: 15px; border-radius: 8px; width: 100%; justify-content: flex-start; height: auto; padding-bottom: 15px;}
+        .before-start ul { grid-template-columns: 1fr; }
+        .tabs-layout { flex-direction: column; min-height: auto; }
+        .tabs-nav {
+            flex-direction: row; overflow-x: auto; min-width: 0;
+            border-right: none; border-bottom: 1px solid var(--border-color);
+            padding-right: 0; padding-bottom: 10px; gap: 6px;
+        }
+        .tab-btn { white-space: nowrap; flex-shrink: 0; padding: 8px 12px; font-size: 12px; }
+        .tab-btn.active { box-shadow: inset 0 -3px 0 var(--secondary-blue); }
+        .features-list { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+        .footer-cta { flex-direction: column; gap: 15px; text-align: center; }
+        .cta-text { flex-direction: column; }
+        .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+        .footer-bottom-left { justify-content: center; }
+        .adoption-phases { justify-content: center; }
+        .section { padding: 20px 18px; }
+        .before-start { padding: 20px 18px; }
+        .products-tabs-section { padding: 20px 18px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="report-container">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-shape" aria-hidden="true">
+            <svg viewBox="0 0 1200 150" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#0A2540"/>
+                        <stop offset="100%" stop-color="#1A5B9C"/>
+                    </linearGradient>
+                </defs>
+                <path d="M300,0 L1200,0 L1200,150 L900,150 C750,150 550,0 300,0 Z" fill="url(#headerGrad)"/>
+            </svg>
+        </div>
+
+        <div class="header-left">
+            <a href="https://www.nubeit.co/" target="_blank" rel="noopener noreferrer" class="logo-container">
+                <img src="https://www.nubeit.co/img/Logo_NubeIT.png" alt="Nube IT">
+            </a>
+            <div class="header-title">
+                <h2>Microsoft 365 Business<br>Basic vs Standard vs Premium</h2>
+                <p>Comparativa de los tres planes Business. Solo se incluyen productos que forman parte de al menos uno de los planes.</p>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="microsoft-logo">
+                <div class="ms-squares"><div></div><div></div><div></div><div></div></div>
+                Microsoft 365
+            </div>
+            <div class="header-info">
+                <div>Documento: <strong>Comparativa de licencias</strong></div>
+                <div>Versión: <strong>8.0</strong></div>
+                <div>Fecha: <strong>26 de octubre de 2026</strong></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- BLOQUE "ANTES DE EMPEZAR" -->
+    <div class="before-start">
+        <h3>Antes de empezar</h3>
+        <ul>
+            <li><strong>Solo productos incluidos.</strong> Esta tabla no muestra add-ons ni productos que requieran licencias adicionales (E5, Defender Suite, Purview Suite, etc.).</li>
+            <li><strong>Copilot Chat está en los tres planes.</strong> Microsoft Copilot (integrado en Word, Excel, Outlook) es un add-on de pago en Basic y Standard; en Premium también requiere add-on o plan "with Copilot".</li>
+            <li><strong>Power BI no está incluido en ningún plan Business base.</strong> Requiere add-on (Power BI Pro) en los tres casos.</li>
+        </ul>
+        <div class="cta-inline">
+            <p>¿Quieres que te ayudemos a elegir el plan adecuado?</p>
+            <a href="https://www.nubeit.co/contacto.html?utm_source=guia-html&utm_medium=referral&utm_campaign=comparativa-business&utm_content=antes-de-empezar" target="_blank" rel="noopener noreferrer" class="btn-inline">Cotiza tu licencia →</a>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 1: TABLA COMPARATIVA -->
+    <section class="section">
+        <div class="section-header">
+            <h3>Comparativa de productos incluidos</h3>
+            <p>Solo se listan productos que forman parte de al menos uno de los tres planes Business. Los add-ons no se incluyen.</p>
+        </div>
+        <div class="compare-table-wrap">
+            <table class="compare">
+                <thead>
+                    <tr>
+                        <th>Producto / Característica</th>
+                        <th>Business Basic</th>
+                        <th>Business Standard</th>
+                        <th>Business Premium</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 💻 APLICACIONES Y PRODUCTIVIDAD PERSONAL -->
+                    <tr class="category-row"><td colspan="4">💻 Aplicaciones y productividad personal</td></tr>
+                    <tr><td class="feat">Office desktop apps (Word, Excel, PowerPoint, Outlook)</td><td><span class="no">❌</span></td><td><span class="yes">✅</span> (5 PCs/Macs)</td><td><span class="yes">✅</span> (5 PCs/Macs)</td></tr>
+                    <tr><td class="feat">Office web y móvil</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Outlook desktop client</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Loop (componentes y páginas)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Loop (workspaces)</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Clipchamp Standard</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Editor premium</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Visio for the web</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- ✉️ CORREO, CALENDARIO Y ORGANIZACIÓN -->
+                    <tr class="category-row"><td colspan="4">✉️ Correo, calendario y organización</td></tr>
+                    <tr><td class="feat">Exchange (buzón principal)</td><td>50 GB</td><td>50 GB</td><td>50 GB</td></tr>
+                    <tr><td class="feat">Archivo de correo (auto-expandible)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Seguridad integrada para buzones</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Shifts</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Bookings</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- 🤝 COMUNICACIÓN Y REUNIONES -->
+                    <tr class="category-row"><td colspan="4">🤝 Comunicación y reuniones</td></tr>
+                    <tr><td class="feat">Microsoft Teams</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Town Hall / Webinars / Immersive Events</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Audio Conferencing</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Avatares para Teams</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- ☁️ ARCHIVOS, ALMACENAMIENTO Y COLABORACIÓN -->
+                    <tr class="category-row"><td colspan="4">☁️ Archivos, almacenamiento y colaboración</td></tr>
+                    <tr><td class="feat">OneDrive (1 TB)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">SharePoint Plan 1 + 10 GB/licencia</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- 📋 TAREAS, FORMULARIOS Y BÚSQUEDA -->
+                    <tr class="category-row"><td colspan="4">📋 Tareas, formularios y búsqueda</td></tr>
+                    <tr><td class="feat">Microsoft Planner</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft To-Do</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Forms</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Lists</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Search</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- 🌱 EXPERIENCIA DEL EMPLEADO Y APRENDIZAJE -->
+                    <tr class="category-row"><td colspan="4">🌱 Experiencia del empleado y aprendizaje</td></tr>
+                    <tr><td class="feat">Viva Connections</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Viva Learning (contenido base)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Viva Insights (personal)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Viva Engage (comunidades)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- ⚙️ APLICACIONES Y AUTOMATIZACIÓN -->
+                    <tr class="category-row"><td colspan="4">⚙️ Aplicaciones y automatización</td></tr>
+                    <tr><td class="feat">Power Apps for Microsoft 365</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Power Automate for Microsoft 365</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Copilot Studio for Teams</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Dataverse for Teams</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- 🤖 INTELIGENCIA ARTIFICIAL -->
+                    <tr class="category-row"><td colspan="4">🤖 Inteligencia artificial</td></tr>
+                    <tr><td class="feat">Microsoft 365 Copilot Chat</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- 🖥️ PROTECCIÓN DE EQUIPOS Y DISPOSITIVOS -->
+                    <tr class="category-row"><td colspan="4">🖥️ Protección de equipos y dispositivos</td></tr>
+                    <tr><td class="feat">Basic Mobility and Security (MDM básico)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Intune Plan 1</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Defender for Business</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">BitLocker (vía Defender for Business)</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Windows Information Protection</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- 🛡️ PROTECCIÓN DEL CORREO Y NAVEGACIÓN -->
+                    <tr class="category-row"><td colspan="4">🛡️ Protección del correo y navegación</td></tr>
+                    <tr><td class="feat">Defender for Office 365 Plan 1</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">URL time-of-click protection</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- 🔐 IDENTIDAD Y CONTROL DE ACCESO -->
+                    <tr class="category-row"><td colspan="4">🔐 Identidad y control de acceso</td></tr>
+                    <tr><td class="feat">Microsoft Entra ID Free (MFA vía Security Defaults)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Microsoft Entra ID Plan 1</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Conditional Access</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Single Sign-On (SSO)</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- 📁 PROTECCIÓN DE DATOS Y CUMPLIMIENTO -->
+                    <tr class="category-row"><td colspan="4">📁 Protección de datos y cumplimiento</td></tr>
+                    <tr><td class="feat">Purview DLP (email y archivos)</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Etiquetas de sensibilidad (manuales)</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">eDiscovery (Standard)</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+                    <tr><td class="feat">Audit (Standard)</td><td><span class="no">❌</span></td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+
+                    <!-- 💲 PRECIO DE REFERENCIA -->
+                    <tr class="category-row"><td colspan="4">💲 Precio de referencia</td></tr>
+                    <tr><td class="feat">Precio referencia (USD/mes, anual)</td><td>~$7</td><td>~$14</td><td>~$22</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TAB CONTROL 1: PRODUCTIVIDAD -->
+    <!-- ============================================================ -->
+    <section class="products-tabs-section">
+        <div class="section-header">
+            <div class="category-badge"><span class="badge-icon">👥</span> Productividad</div>
+            <h3>Productos y funcionalidades en video</h3>
+            <p>Selecciona un producto en el panel izquierdo para ver sus funcionalidades principales en video.</p>
+        </div>
+
+        <div class="tabs-layout" data-tabs-group="productividad">
+            <nav class="tabs-nav" role="tablist" aria-label="Productos de productividad">
+                <button class="tab-btn active" role="tab" aria-selected="true" data-tab="prod-exchange"><span class="tab-icon">📧</span><span class="tab-label">Exchange Online</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-teams"><span class="tab-icon">💬</span><span class="tab-label">Microsoft Teams</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-onedrive"><span class="tab-icon">☁️</span><span class="tab-label">OneDrive</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-sharepoint"><span class="tab-icon">🌐</span><span class="tab-label">SharePoint</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-office-web"><span class="tab-icon">📱</span><span class="tab-label">Office web y móvil</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-office-desktop"><span class="tab-icon">💻</span><span class="tab-label">Office escritorio</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-loop"><span class="tab-icon">🔁</span><span class="tab-label">Microsoft Loop</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-clipchamp"><span class="tab-icon">🎬</span><span class="tab-label">Clipchamp</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-planner"><span class="tab-icon">📋</span><span class="tab-label">Planner y To-Do</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-viva"><span class="tab-icon">📚</span><span class="tab-label">Microsoft Viva</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-power"><span class="tab-icon">⚡</span><span class="tab-label">Power Platform</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="prod-copilot"><span class="tab-icon">🤖</span><span class="tab-label">Copilot</span></button>
+            </nav>
+
+            <div class="tabs-panel">
+                <!-- Exchange -->
+                <div class="tab-content active" id="tab-prod-exchange" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Exchange Online — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Buzón principal de 50 GB</li>
+                        <li>Archivo de correo con expansión automática</li>
+                        <li>Calendario compartido</li>
+                        <li>Outlook desktop client (Standard y Premium)</li>
+                        <li>Seguridad integrada para buzones en la nube</li>
+                        <li>Buzones de recursos</li>
+                        <li>Microsoft Shifts</li>
+                        <li>Microsoft Bookings</li>
+                        <li>Dominio de correo personalizado</li>
+                        <li>Acceso vía web, escritorio y móvil</li>
+                    </ul>
+                </div>
+
+                <!-- Teams -->
+                <div class="tab-content" id="tab-prod-teams" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Microsoft Teams — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Chat ilimitado</li>
+                        <li>Reuniones en línea</li>
+                        <li>Town Hall (hasta 3,000 asistentes)</li>
+                        <li>Webinars</li>
+                        <li>Immersive Events</li>
+                        <li>Compartir pantalla y fondos personalizados</li>
+                        <li>Grabación de reuniones</li>
+                        <li>Avatares para Teams</li>
+                        <li>Notificaciones prioritarias</li>
+                        <li>Audio Conferencing</li>
+                    </ul>
+                </div>
+
+                <!-- OneDrive -->
+                <div class="tab-content" id="tab-prod-onedrive" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: OneDrive — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Almacenamiento personal de 1 TB por usuario</li>
+                        <li>Sincronización automática entre dispositivos</li>
+                        <li>Acceso desde PC, Mac, web y móvil</li>
+                        <li>Compartir archivos y carpetas con permisos</li>
+                        <li>Colaboración en tiempo real en documentos</li>
+                        <li>Historial de versiones de archivos</li>
+                        <li>Papelera de reciclaje y recuperación</li>
+                        <li>Integración con Office</li>
+                        <li>Copia de seguridad de carpetas</li>
+                        <li>Acceso sin conexión a archivos</li>
+                    </ul>
+                </div>
+
+                <!-- SharePoint -->
+                <div class="tab-content" id="tab-prod-sharepoint" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: SharePoint — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>SharePoint Plan 1</li>
+                        <li>10 GB de almacenamiento adicional por licencia</li>
+                        <li>Sitios de equipo para colaboración</li>
+                        <li>Bibliotecas de documentos con control de versiones</li>
+                        <li>Intranet corporativa y portales internos</li>
+                        <li>Permisos granulares por sitio y documento</li>
+                        <li>Flujos de trabajo y aprobaciones</li>
+                        <li>Búsqueda empresarial (Microsoft Search)</li>
+                        <li>Integración con Teams y OneDrive</li>
+                        <li>Microsoft Lists y Microsoft Forms</li>
+                    </ul>
+                </div>
+
+                <!-- Office web y móvil -->
+                <div class="tab-content" id="tab-prod-office-web" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Office web y móvil — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Microsoft 365 for the web (Word, Excel, PowerPoint, OneNote)</li>
+                        <li>Microsoft 365 for mobile (iOS y Android)</li>
+                        <li>Visio for the web</li>
+                        <li>Edición básica sin instalar software</li>
+                        <li>Colaboración en tiempo real</li>
+                        <li>Guardado automático en OneDrive</li>
+                        <li>Compartir documentos con enlaces</li>
+                        <li>Comentarios y control de cambios</li>
+                        <li>Interfaz multilingüe (Standard y Premium)</li>
+                        <li>Microsoft Editor premium (Standard y Premium)</li>
+                    </ul>
+                </div>
+
+                <!-- Office escritorio -->
+                <div class="tab-content" id="tab-prod-office-desktop" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Office escritorio — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-standard">Standard+</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Word, Excel, PowerPoint, OneNote, Outlook instalables</li>
+                        <li>Instalación en hasta 5 PCs/Macs + 5 tablets + 5 smartphones</li>
+                        <li>Outlook desktop client completo</li>
+                        <li>Trabajo offline sin conexión</li>
+                        <li>Funciones avanzadas de Excel (tablas dinámicas, macros)</li>
+                        <li>Integración con OneDrive y SharePoint</li>
+                        <li>Actualizaciones automáticas</li>
+                        <li>Compatibilidad con complementos</li>
+                        <li>Shared computer activation</li>
+                        <li>Acceso a archivos locales y en la nube</li>
+                    </ul>
+                </div>
+
+                <!-- Loop -->
+                <div class="tab-content" id="tab-prod-loop" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Microsoft Loop — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común*</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Crear y compartir componentes de Loop</li>
+                        <li>Crear y compartir páginas de Loop</li>
+                        <li>Crear y compartir workspaces (solo Standard y Premium)</li>
+                        <li>Contribuir a componentes, páginas y workspaces</li>
+                        <li>Co-creación de contenido en tiempo real</li>
+                        <li>Organización de proyectos y actas de reunión</li>
+                        <li>Documentos vivos que se sincronizan</li>
+                        <li>Integración con Teams y Outlook</li>
+                        <li>Acceso desde web y móvil</li>
+                        <li>Sincronización con OneDrive y SharePoint</li>
+                    </ul>
+                </div>
+
+                <!-- Clipchamp -->
+                <div class="tab-content" id="tab-prod-clipchamp" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Clipchamp — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-standard">Standard+</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Clipchamp Standard incluido</li>
+                        <li>Edición de video integrada en el navegador</li>
+                        <li>Plantillas para videos de capacitación y redes</li>
+                        <li>Grabación de pantalla y webcam</li>
+                        <li>Biblioteca de música y efectos</li>
+                        <li>Subtítulos automáticos</li>
+                        <li>Recorte y división de clips</li>
+                        <li>Transiciones y animaciones</li>
+                        <li>Exportación en distintas resoluciones</li>
+                        <li>Integración con OneDrive</li>
+                    </ul>
+                </div>
+
+                <!-- Planner y To-Do -->
+                <div class="tab-content" id="tab-prod-planner" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Planner y To-Do — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Microsoft Planner incluido</li>
+                        <li>Microsoft To-Do incluido</li>
+                        <li>Creación de planes y tareas</li>
+                        <li>Asignación de tareas a miembros del equipo</li>
+                        <li>Seguimiento de progreso</li>
+                        <li>Fechas de vencimiento y prioridades</li>
+                        <li>Integración con Teams</li>
+                        <li>Vistas de tablero y calendario</li>
+                        <li>Sincronización entre dispositivos</li>
+                        <li>Colaboración en listas compartidas</li>
+                    </ul>
+                </div>
+
+                <!-- Viva -->
+                <div class="tab-content" id="tab-prod-viva" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Microsoft Viva — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Viva Connections: dashboard, feed, recursos y app en Teams</li>
+                        <li>Viva Learning: aprendizaje en Teams</li>
+                        <li>Creación de pestañas de aprendizaje en canales de Teams</li>
+                        <li>Búsqueda y compartición de contenido de aprendizaje</li>
+                        <li>Bibliotecas Microsoft Learn y Microsoft 365 Training</li>
+                        <li>125 cursos top de LinkedIn Learning</li>
+                        <li>Contenido generado por la organización con SharePoint</li>
+                        <li>Viva Insights: app en Teams</li>
+                        <li>Viva Insights: insights personales</li>
+                        <li>Viva Engage: comunidades, conversaciones y storylines</li>
+                    </ul>
+                </div>
+
+                <!-- Power Platform -->
+                <div class="tab-content" id="tab-prod-power" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Power Platform — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Power Apps for Microsoft 365</li>
+                        <li>Power Automate for Microsoft 365</li>
+                        <li>Copilot Studio for Teams</li>
+                        <li>Dataverse for Teams</li>
+                        <li>Creación de apps sin código</li>
+                        <li>Automatización de flujos de trabajo</li>
+                        <li>Construcción de chatbots en Teams</li>
+                        <li>Almacenamiento de datos en Dataverse</li>
+                        <li>Integración con el ecosistema M365</li>
+                        <li>Límites de funcionalidad según licencia</li>
+                    </ul>
+                </div>
+
+                <!-- Copilot -->
+                <div class="tab-content" id="tab-prod-copilot" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Copilot — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común*</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Microsoft 365 Copilot Chat (incluido en los tres planes)</li>
+                        <li>Asistencia de escritura y análisis de datos</li>
+                        <li>Resumen de correos y reuniones</li>
+                        <li>Búsqueda inteligente en el contenido de M365</li>
+                        <li>Microsoft Copilot integrado en Word, Excel, PowerPoint y Outlook</li>
+                        <li>Requiere add-on en los tres planes</li>
+                        <li>Business Standard y Premium tienen opción "with Copilot"</li>
+                        <li>Copilot Business: add-on para hasta 300 usuarios</li>
+                        <li>Integración con el contexto del negocio</li>
+                        <li>Respeta permisos y políticas de seguridad existentes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TAB CONTROL 2: SEGURIDAD Y CUMPLIMIENTO -->
+    <!-- ============================================================ -->
+    <section class="products-tabs-section">
+        <div class="section-header">
+            <div class="category-badge"><span class="badge-icon">🛡️</span> Seguridad y Cumplimiento</div>
+            <h3>Productos y funcionalidades en video</h3>
+            <p>Selecciona un producto en el panel izquierdo para ver sus funcionalidades principales en video.</p>
+        </div>
+
+        <div class="tabs-layout" data-tabs-group="seguridad">
+            <nav class="tabs-nav" role="tablist" aria-label="Productos de seguridad y cumplimiento">
+                <button class="tab-btn active" role="tab" aria-selected="true" data-tab="seg-defender-business"><span class="tab-icon">🛡️</span><span class="tab-label">Defender for Business</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="seg-intune"><span class="tab-icon">📱</span><span class="tab-label">Intune</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="seg-entra"><span class="tab-icon">🔐</span><span class="tab-label">Entra ID y Acceso Condicional</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="seg-purview"><span class="tab-icon">📋</span><span class="tab-label">Purview (DLP)</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="seg-defender-office"><span class="tab-icon">📨</span><span class="tab-label">Defender for Office 365</span></button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-tab="seg-mobility"><span class="tab-icon">📲</span><span class="tab-label">Basic Mobility and Security</span></button>
+            </nav>
+
+            <div class="tabs-panel">
+                <!-- Defender for Business -->
+                <div class="tab-content active" id="tab-seg-defender-business" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Microsoft Defender for Business — funcionalidades</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-premium">Premium</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Protección de endpoints para PYMES (hasta 300 usuarios)</li>
+                        <li>Microsoft Defender Antimalware</li>
+                        <li>Microsoft Defender Firewall</li>
+                        <li>Microsoft Defender Exploit Guard</li>
+                        <li>Microsoft Defender Credential Guard</li>
+                        <li>BitLocker y BitLocker To Go</li>
+                        <li>Windows Information Protection</li>
+                        <li>Detección y respuesta ante ransomware</li>
+                        <li>Gestión de vulnerabilidades</li>
+                        <li>Alertas y reportes de seguridad</li>
+                    </ul>
+                </div>
+
+                <!-- Intune -->
+                <div class="tab-content" id="tab-seg-intune" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Microsoft Intune — funcionalidades principales</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-premium">Premium</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Microsoft Intune Plan 1</li>
+                        <li>Mobile Device Management (MDM) completo</li>
+                        <li>Mobile Application Management (MAM)</li>
+                        <li>Windows Autopilot</li>
+                        <li>Soporte para macOS (además de Windows/iOS/Android)</li>
+                        <li>Políticas de seguridad y cumplimiento</li>
+                        <li>Despliegue de aplicaciones corporativas</li>
+                        <li>Borrado remoto de datos empresariales</li>
+                        <li>Informes de cumplimiento y salud del dispositivo</li>
+                        <li>Integración con Defender y Entra ID</li>
+                    </ul>
+                </div>
+
+                <!-- Entra ID y Acceso Condicional -->
+                <div class="tab-content" id="tab-seg-entra" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Entra ID y Acceso Condicional — funcionalidades</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-premium">Premium</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Microsoft Entra ID Free (todos los planes)</li>
+                        <li>Microsoft Entra ID Plan 1 (solo Premium)</li>
+                        <li>Multi Factor Authentication (vía Security Defaults)</li>
+                        <li>Conditional Access (solo Premium)</li>
+                        <li>Políticas de acceso basadas en identidad y dispositivo</li>
+                        <li>Bloqueo de acceso desde dispositivos no conformes</li>
+                        <li>Single Sign-On (SSO)</li>
+                        <li>Windows Hello for Business</li>
+                        <li>Cloud user self-service password reset</li>
+                        <li>Advanced Security Reports (solo Premium)</li>
+                    </ul>
+                </div>
+
+                <!-- Purview -->
+                <div class="tab-content" id="tab-seg-purview" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Microsoft Purview — funcionalidades</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-premium">Premium</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Azure Information Protection Plan 1</li>
+                        <li>Etiquetas de sensibilidad manuales</li>
+                        <li>Etiquetado automático de sensibilidad en apps M365</li>
+                        <li>Etiquetas de sensibilidad para reuniones de Teams</li>
+                        <li>Etiquetas automáticas en Exchange, SharePoint y OneDrive</li>
+                        <li>Basic Message Encryption</li>
+                        <li>Advanced Message Encryption</li>
+                        <li>Customer Key</li>
+                        <li>Data Loss Prevention (DLP) para email y archivos</li>
+                        <li>eDiscovery (Standard) y Audit (Standard)</li>
+                    </ul>
+                </div>
+
+                <!-- Defender for Office 365 -->
+                <div class="tab-content" id="tab-seg-defender-office" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Defender for Office 365 — funcionalidades</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-premium">Premium</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>Microsoft Defender for Office 365 Plan 1</li>
+                        <li>Protección avanzada contra phishing</li>
+                        <li>Análisis de adjuntos maliciosos (Safe Attachments)</li>
+                        <li>Análisis de enlaces en tiempo real (Safe Links)</li>
+                        <li>URL time-of-click protection</li>
+                        <li>Detección de suplantación de identidad</li>
+                        <li>Protección para SharePoint, OneDrive y Teams</li>
+                        <li>Políticas antiphishing personalizables</li>
+                        <li>Cuarentena y revisión de correos</li>
+                        <li>Informes en tiempo real</li>
+                    </ul>
+                </div>
+
+                <!-- Basic Mobility and Security -->
+                <div class="tab-content" id="tab-seg-mobility" role="tabpanel">
+                    <div class="video-placeholder"><div class="play-icon">▶</div><div class="video-label">Video: Basic Mobility and Security — funcionalidades</div><div class="video-hint">Reemplaza este bloque con el iframe del video</div></div>
+                    <div class="features-title"><span class="tag tag-common">Común</span> Funcionalidades principales</div>
+                    <ul class="features-list">
+                        <li>MDM básico incluido en los tres planes</li>
+                        <li>Inscripción de dispositivos móviles</li>
+                        <li>Políticas de seguridad básicas</li>
+                        <li>Control de acceso a datos corporativos</li>
+                        <li>Gestión de dispositivos Windows, iOS y Android</li>
+                        <li>Subconjunto limitado de Intune</li>
+                        <li>Protección de datos en dispositivos inscritos</li>
+                        <li>Configuración de requisitos de contraseña</li>
+                        <li>Borrado remoto selectivo</li>
+                        <li>Base para migrar a Intune Plan 1 (Premium)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER CTA -->
+    <div class="footer-cta">
+        <div class="cta-text">
+            <div class="cta-icon">📅</div>
+            <div>
+                <h4>¿Necesitas ayuda para elegir el plan adecuado?</h4>
+                <p>Un especialista de Nube IT puede revisar tu entorno y recomendarte la licencia que mejor se ajusta.</p>
+            </div>
+        </div>
+        <div class="cta-buttons">
+            <a href="https://www.nubeit.co/contacto.html?utm_source=guia-html&utm_medium=referral&utm_campaign=comparativa-business&utm_content=pie" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Cotiza tu licencia →</a>
+        </div>
+    </div>
+
+    <!-- FOOTER BOTTOM -->
+    <footer class="footer-bottom">
+        <div class="footer-bottom-left">
+            <div class="adoption-phases">
+                <a class="phase" href="https://www.nubeit.co/microsoft365.html#roadmap" target="_blank" rel="noopener noreferrer"><span class="icon">👥</span> Productividad</a>
+                <a class="phase" href="https://www.nubeit.co/microsoft365.html#roadmap" target="_blank" rel="noopener noreferrer"><span class="icon">🔐</span> Identidad y dispositivos</a>
+                <a class="phase" href="https://www.nubeit.co/microsoft365.html#roadmap" target="_blank" rel="noopener noreferrer"><span class="icon">🛡️</span> Protección</a>
+                <a class="phase" href="https://www.nubeit.co/microsoft365.html#roadmap" target="_blank" rel="noopener noreferrer"><span class="icon">📋</span> Gobierno de la información</a>
+                <a class="phase" href="https://www.nubeit.co/microsoft365.html#roadmap" target="_blank" rel="noopener noreferrer"><span class="icon">🤖</span> IA y automatización</a>
+            </div>
+        </div>
+        <div class="footer-bottom-right">
+            <a href="https://www.nubeit.co/" target="_blank" rel="noopener noreferrer">www.nubeit.co</a>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    (function() {
+        const tabGroups = document.querySelectorAll('[data-tabs-group]');
+
+        tabGroups.forEach(function(group) {
+            const nav = group.querySelector('.tabs-nav');
+            const tabButtons = group.querySelectorAll('.tab-btn');
+            const tabContents = group.querySelectorAll('.tab-content');
+
+            function activateTab(tabId) {
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-selected', 'false');
+                });
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                const activeBtn = group.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+                const activeContent = group.querySelector('#tab-' + tabId);
+                if (activeBtn && activeContent) {
+                    activeBtn.classList.add('active');
+                    activeBtn.setAttribute('aria-selected', 'true');
+                    activeContent.classList.add('active');
+                }
+            }
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    activateTab(this.dataset.tab);
+                });
+            });
+
+            nav.addEventListener('keydown', function(e) {
+                const currentBtn = document.activeElement;
+                if (!currentBtn.classList.contains('tab-btn')) return;
+                const btns = Array.from(tabButtons);
+                const idx = btns.indexOf(currentBtn);
+                if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    const next = btns[(idx + 1) % btns.length];
+                    next.focus();
+                    activateTab(next.dataset.tab);
+                } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    const prev = btns[(idx - 1 + btns.length) % btns.length];
+                    prev.focus();
+                    activateTab(prev.dataset.tab);
+                }
+            });
+        });
+    })();
+</script>
+
+</body>
+</html>
