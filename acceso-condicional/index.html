@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Condicional · Animación Interactiva</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #eef3f8;
+      font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px 28px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      width: 1000px;
+      height: 1000px;
+      max-width: 100%;
+      max-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .case-header {
+      text-align: center;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    .case-badge {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 6px 16px;
+      border-radius: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+      transition: all 0.3s ease;
+    }
+
+    .case-badge.neutral {
+      background: #e1f5fe;
+      color: #0077b5;
+    }
+    .case-badge.success {
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #10b981;
+    }
+    .case-badge.danger {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #ef4444;
+    }
+
+    .diagram-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      padding: 15px 0;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .connectors {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .line {
+      stroke: #0077b5;
+      stroke-width: 3;
+      fill: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .line.show { opacity: 1; }
+    
+    .line.flowing {
+      stroke-dasharray: 10 6;
+      animation: dash 1s linear infinite;
+    }
+
+    @keyframes dash { to { stroke-dashoffset: -16; } }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .col-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #0077b5;
+      margin-bottom: 12px;
+      text-align: center;
+      background: white;
+      padding: 3px 8px;
+      border-radius: 20px;
+      z-index: 3;
+    }
+
+    .step-number {
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      width: 26px;
+      height: 26px;
+      background: #ffb703;
+      color: #1a2e4a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s;
+      z-index: 10;
+    }
+    .step-number.active {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .col-signals {
+      width: 190px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      position: relative;
+      padding: 5px;
+    }
+
+    .signal-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.4s ease;
+      opacity: 0.3;
+      filter: grayscale(1);
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      background: white;
+      padding: 3px 6px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+
+    .signal-item.active {
+      opacity: 1;
+      filter: grayscale(0);
+      transform: scale(1.04);
+    }
+
+    .signal-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #0077b5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      color: #0077b5;
+      z-index: 3;
+      flex-shrink: 0;
+    }
+
+    .signal-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #1f2937;
+      line-height: 1.1;
+      z-index: 3;
+    }
+
+    .col-cloud {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cloud-svg {
+      width: 140px;
+      height: 105px;
+      transition: all 0.4s;
+    }
+    
+    .cloud-svg path {
+      fill: white;
+      stroke: #0077b5;
+      stroke-width: 4;
+      stroke-linejoin: round;
+      transition: all 0.3s;
+    }
+
+    .cloud-svg.active path {
+      fill: #e1f5fe;
+      stroke: #00416a;
+      filter: drop-shadow(0 0 12px rgba(0, 119, 181, 0.5));
+    }
+
+    .cloud-key-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      background: #0077b5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+      box-shadow: 0 0 12px rgba(0, 119, 181, 0.4);
+      z-index: 5;
+    }
+
+    .cloud-key-container.active {
+      animation: pulseKey 2s infinite;
+    }
+
+    @keyframes pulseKey {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.08); }
+    }
+
+    .policy-panel {
+      margin-top: 10px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 12px;
+      width: 215px;
+      font-size: 0.73rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.4s;
+      z-index: 4;
+    }
+    .policy-panel.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .policy-panel h4 {
+      color: #1f2937;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      text-align: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 3px;
+    }
+    .policy-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 5px;
+      color: #4b5563;
+      transition: all 0.3s;
+    }
+    .policy-item .status-icon {
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    .policy-item.evaluating {
+      color: #0077b5;
+      font-weight: 600;
+    }
+    .policy-item.pass .status-icon { color: #10b981; }
+    .policy-item.fail .status-icon { color: #f59e0b; }
+    .policy-item.fail { color: #d97706; font-weight: 600; }
+    .policy-item.mfa-step { color: #3b82f6; font-weight: 600; }
+    .policy-item.mfa-step .status-icon { color: #3b82f6; }
+
+    .col-verify {
+      width: 175px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: flex-start;
+      position: relative;
+      padding-left: 8px;
+    }
+
+    .verify-branch {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.4s;
+      opacity: 0.3;
+      filter: grayscale(1);
+      position: relative;
+      z-index: 2;
+    }
+
+    .verify-branch.active {
+      opacity: 1;
+      filter: grayscale(0);
+      transform: translateX(4px);
+    }
+
+    .verify-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      z-index: 3;
+    }
+
+    .v-green { border: 3px solid #10b981; color: #10b981; }
+    .v-blue { border: 3px solid #3b82f6; color: #3b82f6; }
+    .v-red { border: 3px solid #ef4444; color: #ef4444; }
+
+    .verify-text {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #1f2937;
+      z-index: 3;
+      background: white;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .v-green .verify-text { color: #10b981; }
+    .v-blue .verify-text { color: #3b82f6; }
+    .v-red .verify-text { color: #ef4444; }
+
+    .col-apps {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      transition: all 0.4s;
+      opacity: 0.3;
+      filter: grayscale(1);
+      z-index: 2;
+    }
+
+    .col-apps.active {
+      opacity: 1;
+      filter: grayscale(0);
+    }
+
+    .app-icon {
+      font-size: 2.2rem;
+      color: #0077b5;
+      background: #e1f5fe;
+      padding: 8px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+    }
+
+    .explanation-bar {
+      background: #f0f4f8;
+      border: 1px solid #d1d9e0;
+      border-radius: 10px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: #334155;
+      min-height: 75px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      flex-shrink: 0;
+    }
+    .explanation-icon { font-size: 2rem; }
+    .explanation-text { font-size: 1.05rem; font-weight: 500; line-height: 1.4; }
+
+    .controls { 
+      display: flex; 
+      justify-content: center; 
+      gap: 12px; 
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .btn {
+      background: #0077b5;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 119, 181, 0.25);
+    }
+    .btn:hover { background: #005e93; transform: translateY(-2px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-secondary { background: #475569; box-shadow: 0 4px 12px rgba(71, 85, 105, 0.25); }
+    .btn-secondary:hover { background: #334155; }
+
+    @media (max-width: 950px) {
+      .card {
+        width: 100%;
+        height: auto;
+        min-height: 100vh;
+      }
+      .diagram-container { flex-wrap: wrap; justify-content: center; gap: 25px; }
+      .connectors { display: none; }
+      .col-verify { align-items: center; padding-left: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  
+  <div class="case-header">
+    <div class="case-badge neutral" id="caseBadge">🚀 Demostración de Acceso Condicional (Zero Trust)</div>
+  </div>
+
+  <div class="diagram-container" id="diagram">
+    <svg class="connectors" id="connectors">
+      <path class="line" id="line-user" />
+      <path class="line" id="line-device" />
+      <path class="line" id="line-app" />
+      <path class="line" id="line-risk" />
+      <path class="line" id="line-main" />
+      <path class="line" id="line-success" />
+      <path class="line" id="line-mfa" />
+      <path class="line" id="line-fail" />
+    </svg>
+
+    <div class="col col-signals">
+      <div class="step-number" id="num1">1</div>
+      <div class="col-title" style="margin-bottom: 4px;">Señales</div>
+      <div class="signal-item" id="sig-user">
+        <div class="signal-circle">👤</div>
+        <div class="signal-label">Usuario / Ubicación</div>
+      </div>
+      <div class="signal-item" id="sig-device">
+        <div class="signal-circle">💻</div>
+        <div class="signal-label">Dispositivo</div>
+      </div>
+      <div class="signal-item" id="sig-app">
+        <div class="signal-circle">📁</div>
+        <div class="signal-label">Aplicación</div>
+      </div>
+      <div class="signal-item" id="sig-risk">
+        <div class="signal-circle">⚠️</div>
+        <div class="signal-label">Riesgo tiempo real</div>
+      </div>
+    </div>
+
+    <div class="col col-cloud">
+      <div class="step-number" id="num2" style="left: 50%; margin-left: -13px; top: -26px;">2</div>
+      <div class="col-title" style="margin-bottom: 4px;">Verificar intento</div>
+      <div style="position: relative;">
+        <svg class="cloud-svg" id="cloudSvg" viewBox="0 0 100 80">
+          <path d="M 20 60 A 15 15 0 0 1 20 30 A 20 20 0 0 1 55 15 A 20 20 0 0 1 85 35 A 15 15 0 0 1 85 60 Z" />
+        </svg>
+        <div class="cloud-key-container" id="cloudKey">🔑</div>
+      </div>
+      <div class="policy-panel" id="policyPanel">
+        <h4>Políticas</h4>
+        <div class="policy-item" id="p1"><span class="status-icon">⏳</span> ¿País habitual?</div>
+        <div class="policy-item" id="p2"><span class="status-icon">⏳</span> ¿Dispositivo seguro?</div>
+        <div class="policy-item" id="p3"><span class="status-icon">⏳</span> ¿Riesgo de usuario?</div>
+      </div>
+    </div>
+
+    <div class="col col-verify">
+      <div class="step-number" id="num3" style="left: 50%; margin-left: -13px; top: -26px;">3</div>
+      <div class="verify-branch" id="branch-success">
+        <div class="verify-circle v-green">✓</div>
+        <div class="verify-text">Permitir acceso</div>
+      </div>
+      <div class="verify-branch" id="branch-mfa">
+        <div class="verify-circle v-blue">🔒</div>
+        <div class="verify-text">Requerir MFA</div>
+      </div>
+      <div class="verify-branch" id="branch-fail">
+        <div class="verify-circle v-red">🚫</div>
+        <div class="verify-text">Bloquear acceso</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="step-number" id="num4" style="left: 50%; margin-left: -13px; top: -26px;">4</div>
+      <div class="col-title" style="margin-bottom: 12px;">Apps y datos</div>
+      <div class="col-apps" id="colApps">
+        <div class="app-icon">🏢</div>
+        <div class="app-icon">📊</div>
+        <div class="app-icon">☁️</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explanation-bar">
+    <div class="explanation-icon" id="expIcon">👋</div>
+    <div class="explanation-text" id="expText">Pulsa "Iniciar simulación" para visualizar los casos interactivos paso a paso.</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="startBtn"><span>▶️</span> Iniciar simulación</button>
+    <button class="btn btn-secondary" id="nextBtn" style="display: none;"><span>➡️</span> Siguiente caso</button>
+    <button class="btn btn-secondary" id="repeatBtn" style="display: none;"><span>🔄</span> Repetir este caso</button>
+    <button class="btn btn-secondary" id="restartAllBtn" style="display: none;"><span>🔄</span> Volver a iniciar simulación</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const el = id => document.getElementById(id);
+    const sigUser = el('sig-user'), sigDevice = el('sig-device'), sigApp = el('sig-app'), sigRisk = el('sig-risk');
+    const cloudSvg = el('cloudSvg'), cloudKey = el('cloudKey'), policyPanel = el('policyPanel');
+    const p1 = el('p1'), p2 = el('p2'), p3 = el('p3');
+    const branchSuccess = el('branch-success'), branchMfa = el('branch-mfa'), branchFail = el('branch-fail');
+    const colApps = el('colApps'), num1 = el('num1'), num2 = el('num2'), num3 = el('num3'), num4 = el('num4');
+    const caseBadge = el('caseBadge'), expIcon = el('expIcon'), expText = el('expText');
+    const startBtn = el('startBtn'), nextBtn = el('nextBtn'), repeatBtn = el('repeatBtn'), restartAllBtn = el('restartAllBtn');
+
+    const lines = {
+      user: el('line-user'), device: el('line-device'), app: el('line-app'), risk: el('line-risk'),
+      main: el('line-main'), success: el('line-success'), mfa: el('line-mfa'), fail: el('line-fail')
+    };
+
+    let activeTimeouts = [];
+    let isRunning = false;
+    let currentScenarioIndex = 0;
+
+    const scenarios = [
+      { title: '✅ Caso de Éxito: Señales Normales', failPolicy: 0, action: 'success', isMfaCase: false, badgeType: 'success' },
+      { title: '✅ Caso de Éxito: País Diferente (Verificación por Código SMS)', failPolicy: 0, action: 'mfa', isMfaCase: true, badgeType: 'success' },
+      { title: '❌ Caso Fallido: Dispositivo Sospechoso (Acceso Bloqueado)', failPolicy: 2, action: 'fail', isMfaCase: false, badgeType: 'danger' },
+      { title: '❌ Caso Fallido: Riesgo de Usuario (Acceso Bloqueado)', failPolicy: 3, action: 'fail', isMfaCase: false, badgeType: 'danger' }
+    ];
+
+    function drawLines() {
+      const svgRect = el('connectors').getBoundingClientRect();
+      const getCenter = node => {
+        const r = node.getBoundingClientRect();
+        return { x: r.left - svgRect.left + r.width / 2, y: r.top - svgRect.top + r.height / 2 };
+      };
+      const cCloud = getCenter(cloudSvg);
+
+      const setPath = (pathEl, n1, n2) => {
+        const c1 = getCenter(n1), c2 = getCenter(n2);
+        pathEl.setAttribute('d', `M ${c1.x + 20} ${c1.y} Q ${(c1.x + c2.x) / 2} ${(c1.y + c2.y) / 2} ${c2.x - 40} ${c2.y}`);
+      };
+
+      setPath(lines.user, sigUser, cloudSvg);
+      setPath(lines.device, sigDevice, cloudSvg);
+      setPath(lines.app, sigApp, cloudSvg);
+      setPath(lines.risk, sigRisk, cloudSvg);
+    }
+
+    function resetVisuals() {
+      activeTimeouts.forEach(clearTimeout);
+      activeTimeouts = [];
+      isRunning = false;
+      
+      [sigUser, sigDevice, sigApp, sigRisk].forEach(s => s.classList.remove('active'));
+      cloudSvg.classList.remove('active');
+      cloudKey.classList.remove('active');
+      policyPanel.classList.remove('show');
+      [branchSuccess, branchMfa, branchFail].forEach(b => b.classList.remove('active'));
+      colApps.classList.remove('active');
+      
+      Object.values(lines).forEach(l => { l.classList.remove('show', 'flowing'); l.setAttribute('d', ''); });
+      [num1, num2, num3, num4].forEach(n => n.classList.remove('active'));
+
+      [p1, p2, p3].forEach(p => { p.className = 'policy-item'; });
+      p1.innerHTML = '<span class="status-icon">⏳</span> ¿País habitual?';
+      p2.innerHTML = '<span class="status-icon">⏳</span> ¿Dispositivo seguro?';
+      p3.innerHTML = '<span class="status-icon">⏳</span> ¿Riesgo de usuario?';
+      
+      caseBadge.className = 'case-badge neutral';
+      caseBadge.textContent = '🚀 Demostración de Acceso Condicional (Zero Trust)';
+      expIcon.textContent = '👋';
+      expText.textContent = 'Pulsa "Iniciar simulación" para visualizar los casos interactivos paso a paso.';
+      
+      startBtn.style.display = 'inline-flex';
+      startBtn.disabled = false;
+      startBtn.innerHTML = '<span>▶️</span> Iniciar simulación';
+      nextBtn.style.display = 'none';
+      repeatBtn.style.display = 'none';
+      restartAllBtn.style.display = 'none';
+      currentScenarioIndex = 0;
+    }
+
+    function setExplanation(icon, text) { expIcon.textContent = icon; expText.textContent = text; }
+    const wait = ms => new Promise(res => activeTimeouts.push(setTimeout(res, ms)));
+
+    async function runScenario(cfg) {
+      isRunning = true;
+      startBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      repeatBtn.style.display = 'none';
+      restartAllBtn.style.display = 'none';
+
+      [branchSuccess, branchMfa, branchFail].forEach(b => b.classList.remove('active'));
+      colApps.classList.remove('active');
+      cloudSvg.classList.remove('active');
+      cloudKey.classList.remove('active');
+      policyPanel.classList.remove('show');
+      Object.values(lines).forEach(l => { l.classList.remove('show', 'flowing'); l.setAttribute('d', ''); });
+      [num1, num2, num3, num4].forEach(n => n.classList.remove('active'));
+
+      [p1, p2, p3].forEach(p => { p.className = 'policy-item'; });
+      p1.innerHTML = '<span class="status-icon">⏳</span> ¿País habitual?';
+      p2.innerHTML = '<span class="status-icon">⏳</span> ¿Dispositivo seguro?';
+      p3.innerHTML = '<span class="status-icon">⏳</span> ¿Riesgo de usuario?';
+
+      caseBadge.className = `case-badge ${cfg.badgeType}`;
+      caseBadge.textContent = cfg.title;
+      drawLines();
+
+      // PASO 1
+      num1.classList.add('active');
+      [sigUser, sigDevice, sigApp, sigRisk].forEach(s => s.classList.add('active'));
+      setExplanation('👤', 'Paso 1: Recopilación de señales de identidad, dispositivo y contexto.');
+      await wait(1600);
+
+      ['user', 'device', 'app', 'risk'].forEach(k => lines[k].classList.add('show', 'flowing'));
+      setExplanation('📡', 'Las señales se transmiten de forma segura al motor de identidad en la nube...');
+      await wait(1800);
+
+      // PASO 2
+      num1.classList.remove('active');
+      num2.classList.add('active');
+      cloudSvg.classList.add('active');
+      cloudKey.classList.add('active');
+      policyPanel.classList.add('show');
+      setExplanation('⚖️', 'Paso 2: Análisis dinámico de políticas de seguridad corporativa.');
+      await wait(1000);
+
+      p1.classList.add('evaluating');
+      p1.querySelector('.status-icon').textContent = '🔄';
+      setExplanation('⚖️', 'Evaluando Política 1: ¿Acceso desde ubicación confiable / país habitual?');
+      await wait(1500);
+
+      p1.classList.remove('evaluating');
+      if (cfg.isMfaCase) {
+        p1.classList.add('fail');
+        p1.querySelector('.status-icon').textContent = '⚠️';
+        setExplanation('⚠️', '¡País diferente detectado! Se requiere validación adicional.');
+        await wait(1600);
+
+        p2.classList.add('evaluating', 'mfa-step');
+        p2.querySelector('.status-icon').textContent = '📱';
+        setExplanation('💬', 'Control de Acceso: Enviando código SMS al teléfono registrado (+34 *** ** 89)...');
+        await wait(2000);
+
+        p2.classList.remove('evaluating');
+        p2.classList.add('pass');
+        p2.querySelector('.status-icon').textContent = '✅';
+        setExplanation('💬', '¡Código SMS recibido en el teléfono móvil: [Código: 4829]');
+        await wait(2000);
+
+        p3.classList.add('evaluating', 'mfa-step');
+        p3.querySelector('.status-icon').textContent = '🔢';
+        setExplanation('⌨️', 'Validando el código de autenticación introducido...');
+        await wait(1800);
+
+        p3.classList.remove('evaluating');
+        p3.classList.add('pass');
+        p3.querySelector('.status-icon').textContent = '✅';
+        setExplanation('✅', '¡MFA Verificado correctamente! Identidad confirmada.');
+        await wait(1500);
+      } else {
+        if (cfg.failPolicy === 1) {
+          p1.classList.add('fail');
+          p1.querySelector('.status-icon').textContent = '❌';
+          setExplanation('❌', '¡Alerta! Ubicación desconocida detectada.');
+          await wait(1500);
+        } else {
+          p1.classList.add('pass');
+          p1.querySelector('.status-icon').textContent = '✅';
+          setExplanation('✅', 'Política 1 Aprobada: Ubicación geográfica permitida.');
+          await wait(1300);
+
+          p2.classList.add('evaluating');
+          p2.querySelector('.status-icon').textContent = '🔄';
+          setExplanation('⚖️', 'Evaluando Política 2: ¿El dispositivo cumple los estándares?');
+          await wait(1500);
+
+          p2.classList.remove('evaluating');
+          if (cfg.failPolicy === 2) {
+            p2.classList.add('fail');
+            p2.querySelector('.status-icon').textContent = '❌';
+            setExplanation('❌', '¡Alerta! Dispositivo no registrado o sin cumplimiento.');
+            await wait(1500);
+          } else {
+            p2.classList.add('pass');
+            p2.querySelector('.status-icon').textContent = '✅';
+            setExplanation('✅', 'Política 2 Aprobada: Dispositivo seguro y verificado.');
+            await wait(1300);
+
+            p3.classList.add('evaluating');
+            p3.querySelector('.status-icon').textContent = '🔄';
+            setExplanation('⚖️', 'Evaluando Política 3: ¿Nivel de riesgo de identidad en tiempo real?');
+            await wait(1500);
+
+            p3.classList.remove('evaluating');
+            if (cfg.failPolicy === 3) {
+              p3.classList.add('fail');
+              p3.querySelector('.status-icon').textContent = '❌';
+              setExplanation('❌', '¡Alerta! Se detectó comportamiento de riesgo en la cuenta.');
+              await wait(1500);
+            } else {
+              p3.classList.add('pass');
+              p3.querySelector('.status-icon').textContent = '✅';
+              setExplanation('✅', 'Política 3 Aprobada: Sin anomalías de comportamiento detectadas.');
+              await wait(1300);
+            }
+          }
+        }
+      }
+
+      const getCenterCoords = node => {
+        const r = node.getBoundingClientRect(), sr = el('connectors').getBoundingClientRect();
+        return { x: r.left - sr.left + r.width / 2, y: r.top - sr.top + r.height / 2 };
+      };
+      const cCloudCoords = getCenterCoords(cloudSvg);
+
+      // PASO 3
+      if (cfg.action === 'success') {
+        const targetCircle = branchSuccess.querySelector('.verify-circle');
+        const tc = getCenterCoords(targetCircle);
+        lines.main.setAttribute('d', `M ${cCloudCoords.x + 50} ${cCloudCoords.y} Q ${(cCloudCoords.x + tc.x) / 2} ${(cCloudCoords.y + tc.y) / 2} ${tc.x - 30} ${tc.y}`);
+        lines.main.classList.add('show', 'flowing');
+        num2.classList.remove('active'); num3.classList.add('active');
+        branchSuccess.classList.add('active');
+        setExplanation('✅', 'Paso 3: Acceso concedido directamente sin fricción adicional.');
+        await wait(2000);
+
+        const sc = getCenterCoords(targetCircle);
+        const ac = getCenterCoords(colApps);
+        lines.success.setAttribute('d', `M ${sc.x + 25} ${sc.y} Q ${(sc.x + ac.x) / 2} ${(sc.y + ac.y) / 2} ${ac.x - 30} ${ac.y}`);
+        lines.success.classList.add('show', 'flowing');
+        num3.classList.remove('active'); num4.classList.add('active');
+        colApps.classList.add('active');
+        setExplanation('🎉', 'Paso 4: El usuario ingresa exitosamente a sus aplicaciones corporativas.');
+        await wait(2800);
+      } else if (cfg.action === 'mfa') {
+        const targetCircle = branchMfa.querySelector('.verify-circle');
+        const tc = getCenterCoords(targetCircle);
+        lines.main.setAttribute('d', `M ${cCloudCoords.x + 50} ${cCloudCoords.y} Q ${(cCloudCoords.x + tc.x) / 2} ${(cCloudCoords.y + tc.y) / 2} ${tc.x - 30} ${tc.y}`);
+        lines.main.classList.add('show', 'flowing');
+        num2.classList.remove('active'); num3.classList.add('active');
+        branchMfa.classList.add('active');
+        setExplanation('🔒', 'Paso 3: Se requirió autenticación multifactor (MFA) por país diferente.');
+        await wait(2200);
+
+        const sc = getCenterCoords(targetCircle);
+        const ac = getCenterCoords(colApps);
+        lines.mfa.setAttribute('d', `M ${sc.x + 25} ${sc.y} Q ${(sc.x + ac.x) / 2} ${(sc.y + ac.y) / 2} ${ac.x - 30} ${ac.y}`);
+        lines.mfa.classList.add('show', 'flowing');
+        num3.classList.remove('active'); num4.classList.add('active');
+        colApps.classList.add('active');
+        setExplanation('🎉', 'Paso 4: Identidad verificada mediante código SMS. Acceso concedido.');
+        await wait(2800);
+      } else {
+        const targetCircle = branchFail.querySelector('.verify-circle');
+        const tc = getCenterCoords(targetCircle);
+        lines.main.setAttribute('d', `M ${cCloudCoords.x + 50} ${cCloudCoords.y} Q ${(cCloudCoords.x + tc.x) / 2} ${(cCloudCoords.y + tc.y) / 2} ${tc.x - 30} ${tc.y}`);
+        lines.main.classList.add('show', 'flowing');
+        num2.classList.remove('active'); num3.classList.add('active');
+        branchFail.classList.add('active');
+        setExplanation('🚫', 'Paso 3: Acceso denegado de forma automática para proteger la organización.');
+        await wait(3000);
+      }
+
+      // Fin del caso actual: habilitar controles de navegación
+      isRunning = false;
+      repeatBtn.style.display = 'inline-flex';
+      if (currentScenarioIndex < scenarios.length - 1) {
+        nextBtn.style.display = 'inline-flex';
+      } else {
+        restartAllBtn.style.display = 'inline-flex';
+      }
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (!isRunning) {
+        currentScenarioIndex = 0;
+        runScenario(scenarios[currentScenarioIndex]);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (!isRunning && currentScenarioIndex < scenarios.length - 1) {
+        currentScenarioIndex++;
+        runScenario(scenarios[currentScenarioIndex]);
+      }
+    });
+
+    repeatBtn.addEventListener('click', () => {
+      if (!isRunning) {
+        runScenario(scenarios[currentScenarioIndex]);
+      }
+    });
+
+    restartAllBtn.addEventListener('click', () => {
+      if (!isRunning) {
+        currentScenarioIndex = 0;
+        runScenario(scenarios[currentScenarioIndex]);
+      }
+    });
+
+    window.addEventListener('resize', () => { if (!isRunning) drawLines(); });
+    window.addEventListener('load', drawLines);
+  })();
+</script>
+</body>
+</html>

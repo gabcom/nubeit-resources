@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft Intune & Entra ID · Gestión y Seguridad (TI)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-intune: #f97316;
+      --color-entra: #6366f1;
+      --color-bg: #eef3f8;
+      --color-blue: #0077b5;
+      --color-dark: #1f2937;
+    }
+
+    body {
+      background: var(--color-bg);
+      font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 10px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 15px 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      width: 100%;
+      max-width: 1250px;
+      position: relative;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    .header-title h1 {
+      font-size: 1.3rem;
+      color: #004080;
+      margin-bottom: 2px;
+    }
+
+    .header-title p {
+      color: #5a7a9a;
+      font-size: 0.85rem;
+    }
+
+    /* FLUJO PRINCIPAL */
+    .diagram-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      position: relative;
+      padding: 10px 0;
+      min-height: 220px;
+    }
+
+    .connectors {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .line {
+      stroke: var(--color-blue);
+      stroke-width: 3;
+      fill: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .line.show { opacity: 1; }
+    
+    .line.flowing {
+      stroke-dasharray: 10 6;
+      animation: dash 1s linear infinite;
+    }
+
+    @keyframes dash { to { stroke-dashoffset: -16; } }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      width: 140px;
+    }
+
+    .col-title {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--color-blue);
+      margin-bottom: 10px;
+      text-align: center;
+      background: white;
+      padding: 2px 6px;
+      border-radius: 20px;
+      z-index: 3;
+    }
+
+    .step-number {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 24px;
+      height: 24px;
+      background: #ffb703;
+      color: #1a2e4a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s;
+      z-index: 10;
+    }
+    .step-number.active {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    /* Nodos de los pasos */
+    .step-node {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      transition: all 0.4s;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .col.active .step-node {
+      animation: pulseNode 2s infinite;
+    }
+
+    /* Colores de los nodos */
+    #col1.active .step-node { 
+      border-color: var(--color-entra); 
+      box-shadow: 0 0 0 5px #e0e7ff; 
+    }
+    #col2.active .step-node, #col4.active .step-node, #col5.active .step-node { 
+      border-color: var(--color-intune); 
+      box-shadow: 0 0 0 5px #ffedd5; 
+    }
+    #col3.active .step-node {
+      border-image: linear-gradient(135deg, var(--color-entra), var(--color-intune)) 1;
+      border: 3px solid transparent;
+      background: linear-gradient(white, white) padding-box,
+                  linear-gradient(135deg, var(--color-entra), var(--color-intune)) border-box;
+      box-shadow: 0 0 0 5px #f3e8ff;
+    }
+
+    @keyframes pulseNode {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .step-label {
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: var(--color-dark);
+      background: white;
+      padding: 2px 4px;
+      border-radius: 4px;
+      z-index: 3;
+      text-align: center;
+    }
+
+    .step-desc {
+      font-size: 0.6rem;
+      color: #64748b;
+      margin-top: 2px;
+      line-height: 1.1;
+      background: white;
+      z-index: 3;
+      text-align: center;
+    }
+
+    /* BARRA EXPLICATIVA */
+    .explanation-bar {
+      background: #f0f4f8;
+      border: 1px solid #d1d9e0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #334155;
+      min-height: 65px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    
+    .exp-content {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .explanation-icon { font-size: 1.8rem; }
+    .explanation-text { font-size: 0.95rem; font-weight: 500; line-height: 1.4; }
+
+    /* Botones */
+    .controls { display: flex; justify-content: center; gap: 12px; }
+    .btn {
+      background: var(--color-blue);
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 119, 181, 0.25);
+    }
+    .btn:hover { background: #005e93; transform: translateY(-2px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-start { display: inline-flex; }
+    .btn-repeat { display: none; }
+
+    /* SECCIÓN INFERIOR */
+    .bottom-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .panel {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .panel-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--color-dark);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 6px;
+    }
+
+    /* Ecosistema */
+    .eco-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .eco-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 6px;
+      background: white;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+      opacity: 0.5;
+      border-left-width: 5px;
+    }
+    
+    #eco-entra { border-left-color: var(--color-entra); }
+    #eco-intune { border-left-color: var(--color-intune); }
+
+    .eco-item.active {
+      opacity: 1;
+      transform: translateX(3px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    }
+    #eco-entra.active { border-color: var(--color-entra); background: #f5f3ff; }
+    #eco-intune.active { border-color: var(--color-intune); background: #fff7ed; }
+
+    .eco-icon { font-size: 1.4rem; }
+    .eco-info h4 { font-size: 0.8rem; color: var(--color-dark); display: flex; align-items: center; gap: 4px;}
+    .eco-info p { font-size: 0.7rem; color: #64748b; margin-top: 2px;}
+    
+    /* Licencias */
+    .license-badge {
+      font-size: 0.55rem;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+    .lic-intune { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74;}
+    .lic-entra { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;}
+
+    /* Beneficios de TI (KPIs) */
+    .benefit-list {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .benefit-item {
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      border-radius: 6px;
+      transition: all 0.3s;
+      opacity: 0.4;
+      border: 1px solid transparent;
+      background: white;
+      min-height: 90px;
+    }
+    
+    /* Colores de KPIs */
+    .benefit-item[data-color="intune"].active {
+      background: #fff7ed;
+      border-color: var(--color-intune);
+      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.15);
+    }
+    .benefit-item[data-color="entra"].active {
+      background: #f5f3ff;
+      border-color: var(--color-entra);
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+    }
+    .benefit-item[data-color="hybrid"].active {
+      background: linear-gradient(135deg, #f5f3ff, #fff7ed);
+      border-image: linear-gradient(135deg, var(--color-entra), var(--color-intune)) 1;
+      border-width: 2px;
+      border-style: solid;
+      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.2);
+    }
+
+    .benefit-item.active {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+
+    .b-top { display: flex; align-items: center; gap: 5px; margin-bottom: 6px;}
+    
+    .b-icon { font-size: 1rem;}
+    .benefit-item[data-color="intune"] .b-icon { color: var(--color-intune); }
+    .benefit-item[data-color="entra"] .b-icon { color: var(--color-entra); }
+    .benefit-item[data-color="hybrid"] .b-icon { 
+      background: linear-gradient(135deg, var(--color-entra), var(--color-intune));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .b-text { font-size: 0.75rem; color: var(--color-dark); font-weight: 700; line-height: 1.1; }
+    .b-lic { font-size: 0.7rem; color: #64748b; margin-top: 4px; font-weight: 500; line-height: 1.25;}
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .benefit-list { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 950px) {
+      .diagram-container { flex-wrap: wrap; justify-content: center; gap: 20px; }
+      .connectors { display: none; }
+      .bottom-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .benefit-list { grid-template-columns: repeat(2, 1fr); }
+      .explanation-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  
+  <div class="header">
+    <div class="header-title">
+      <h1>Microsoft Intune + Entra ID</h1>
+      <p>Ciclo de vida del dispositivo y su valor en el negocio</p>
+    </div>
+  </div>
+
+  <!-- FLUJO PRINCIPAL -->
+  <div class="diagram-container" id="diagram">
+    <div class="flow-line" style="position: absolute; top: 50%; left: 5%; width: 90%; height: 4px; background: #e2e8f0; z-index: 1; transform: translateY(-50%); border-radius: 2px;">
+      <div class="flow-line-progress" id="progressLine" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--color-intune); transition: width 0.5s ease, background 0.3s; border-radius: 2px;"></div>
+    </div>
+
+    <!-- Columna 1 -->
+    <div class="col" id="col1">
+      <div class="step-number" id="num1">1</div>
+      <div class="col-title" style="margin-bottom: 4px;">Desempaque<br>(Unboxing)</div>
+      <div class="step-node">💻</div>
+      <div class="step-label">1. Desempaque</div>
+      <div class="step-desc">Empleado enciende el equipo nuevo.</div>
+    </div>
+
+    <!-- Columna 2 -->
+    <div class="col" id="col2">
+      <div class="step-number" id="num2" style="left: 50%; margin-left: -12px; top: -26px;">2</div>
+      <div class="col-title" style="margin-bottom: 4px;">Piloto Automático<br>(Autopilot)</div>
+      <div class="step-node">⚙️</div>
+      <div class="step-label">2. Piloto Automático</div>
+      <div class="step-desc">Configuración automática desde la nube.</div>
+    </div>
+
+    <!-- Columna 3 (Híbrida) -->
+    <div class="col" id="col3">
+      <div class="step-number" id="num3" style="left: 50%; margin-left: -12px; top: -26px;">3</div>
+      <div class="col-title" style="margin-bottom: 4px;">Cumplimiento<br>(Compliance)</div>
+      <div class="step-node">🛡️</div>
+      <div class="step-label">3. Cumplimiento</div>
+      <div class="step-desc">Intune evalúa / Entra ID bloquea.</div>
+    </div>
+
+    <!-- Columna 4 -->
+    <div class="col" id="col4">
+      <div class="step-number" id="num4" style="left: 50%; margin-left: -12px; top: -26px;">4</div>
+      <div class="col-title" style="margin-bottom: 4px;">Distribución<br>(Deployment)</div>
+      <div class="step-node">📦</div>
+      <div class="step-label">4. Distribución</div>
+      <div class="step-desc">Despliegue de apps corporativas.</div>
+    </div>
+
+    <!-- Columna 5 -->
+    <div class="col" id="col5">
+      <div class="step-number" id="num5" style="left: 50%; margin-left: -12px; top: -26px;">5</div>
+      <div class="col-title" style="margin-bottom: 4px;">Control de TI<br>(IT Control)</div>
+      <div class="step-node">📊</div>
+      <div class="step-label">5. Control de TI</div>
+      <div class="step-desc">Monitoreo y soporte remoto.</div>
+    </div>
+
+  </div>
+
+  <!-- BARRA EXPLICATIVA -->
+  <div class="explanation-bar">
+    <div class="exp-content">
+      <div class="explanation-icon" id="expIcon">👋</div>
+      <div class="explanation-text" id="expText">Pulsa "Iniciar simulación" para comenzar.</div>
+    </div>
+    <button class="btn btn-repeat" id="repeatBtn">🔄 Repetir</button>
+  </div>
+
+  <!-- SECCIÓN INFERIOR -->
+  <div class="bottom-layout">
+    
+    <!-- Ecosistema Microsoft -->
+    <div class="panel">
+      <div class="panel-title">🏢 Productos Requeridos</div>
+      <div class="eco-list">
+        <div class="eco-item" id="eco-entra">
+          <div class="eco-icon" style="color:var(--color-entra);">💠</div>
+          <div class="eco-info">
+            <h4>Microsoft Entra ID <span class="license-badge lic-entra">Entra ID P1</span></h4>
+            <p>Identidades, autenticación y Acceso Condicional.</p>
+          </div>
+        </div>
+        <div class="eco-item" id="eco-intune">
+          <div class="eco-icon" style="color:var(--color-intune);">☁️</div>
+          <div class="eco-info">
+            <h4>Microsoft Intune <span class="license-badge lic-intune">Intune P1</span></h4>
+            <p>Gestión de dispositivos (MDM), aplicaciones (MAM) y distribución.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Beneficios Técnicos y Estratégicos -->
+    <div class="panel">
+      <div class="panel-title">📈 Beneficios Técnicos y Estratégicos</div>
+      <div class="benefit-list">
+        
+        <!-- Fila 1 -->
+        <div class="benefit-item" id="ben2" data-color="entra">
+          <div class="b-top"><div class="b-icon">🔒</div><div class="b-text">Confianza Cero<br>(Zero Trust)</div></div>
+          <div class="b-lic">Solo permite el acceso si el usuario y el equipo son de confianza (no hay contraseñas fáciles de robar).</div>
+        </div>
+        <div class="benefit-item" id="ben7" data-color="entra">
+          <div class="b-top"><div class="b-icon">🚪</div><div class="b-text">Sin Contraseña<br>(Passwordless)</div></div>
+          <div class="b-lic">El empleado entra con su huella o rostro (Windows Hello), sin escribir claves que puedan olvidar.</div>
+        </div>
+        <div class="benefit-item" id="ben1" data-color="intune">
+          <div class="b-top"><div class="b-icon">🖥️</div><div class="b-text">Administración Unificada</div></div>
+          <div class="b-lic">El área de TI controla todos los equipos (Windows, Mac, móviles) desde un solo lugar, sin importar dónde estén.</div>
+        </div>
+        <div class="benefit-item" id="ben3" data-color="intune">
+          <div class="b-top"><div class="b-icon">⚙️</div><div class="b-text">Cero Toque<br>(Zero-Touch)</div></div>
+          <div class="b-lic">El equipo se configura solo al encenderlo. El empleado trabaja de inmediato sin que TI tenga que tocarlo.</div>
+        </div>
+        <div class="benefit-item" id="ben4" data-color="hybrid">
+          <div class="b-top"><div class="b-icon">🛡️</div><div class="b-text">Cumplimiento<br>(Compliance)</div></div>
+          <div class="b-lic">Intune revisa que el equipo esté seguro y Entra ID le cierra la puerta si no cumple las reglas.</div>
+        </div>
+
+        <!-- Fila 2 -->
+        <div class="benefit-item" id="ben9" data-color="intune">
+          <div class="b-top"><div class="b-icon">📱</div><div class="b-text">Protección BYOD</div></div>
+          <div class="b-lic">Los empleados usan su teléfono personal para trabajar, pero la empresa protege sus datos sin invadir su privacidad.</div>
+        </div>
+        <div class="benefit-item" id="ben5" data-color="intune">
+          <div class="b-top"><div class="b-icon">📦</div><div class="b-text">Distribución Apps</div></div>
+          <div class="b-lic">Las aplicaciones (Word, Teams, etc.) se instalan solas en los equipos, ahorrando tiempo y errores.</div>
+        </div>
+        <div class="benefit-item" id="ben6" data-color="intune">
+          <div class="b-top"><div class="b-icon">🔄</div><div class="b-text">Actualizaciones</div></div>
+          <div class="b-lic">El sistema se actualiza solo. Los equipos siempre tienen la última protección contra virus y fallos.</div>
+        </div>
+        <div class="benefit-item" id="ben8" data-color="intune">
+          <div class="b-top"><div class="b-icon">📊</div><div class="b-text">Analítica/Soporte</div></div>
+          <div class="b-lic">TI ve la salud de los equipos en tiempo real y da soporte remoto sin tener que ir físicamente.</div>
+        </div>
+        <div class="benefit-item" id="ben10" data-color="intune">
+          <div class="b-top"><div class="b-icon">💰</div><div class="b-text">Reducción TCO</div></div>
+          <div class="b-lic">Menos costos porque no hay que mantener servidores locales ni enviar técnicos a cada oficina.</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-start" id="startBtn">▶️ Iniciar simulación</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const el = id => document.getElementById(id);
+    
+    const col1 = el('col1'), col2 = el('col2'), col3 = el('col3'), col4 = el('col4'), col5 = el('col5');
+    const progressLine = el('progressLine');
+    const ecoIntune = el('eco-intune'), ecoEntra = el('eco-entra');
+
+    const ben1 = el('ben1'), ben2 = el('ben2'), ben3 = el('ben3'), ben4 = el('ben4'), ben5 = el('ben5');
+    const ben6 = el('ben6'), ben7 = el('ben7'), ben8 = el('ben8'), ben9 = el('ben9'), ben10 = el('ben10');
+
+    const expIcon = el('expIcon'), expText = el('expText');
+    const startBtn = el('startBtn'), repeatBtn = el('repeatBtn');
+
+    const colorIntune = '#f97316'; 
+    const colorEntra = '#6366f1';  
+    const colorNeutral = '#cbd5e1';
+
+    let timeouts = [];
+    let isRunning = false;
+
+    function resetVisuals() {
+      timeouts.forEach(clearTimeout);
+      timeouts = [];
+      isRunning = false;
+
+      [col1, col2, col3, col4, col5, ecoIntune, ecoEntra, 
+       ben1, ben2, ben3, ben4, ben5, ben6, ben7, ben8, ben9, ben10].forEach(el => el.classList.remove('active'));
+      
+      [el('num1'), el('num2'), el('num3'), el('num4'), el('num5')].forEach(n => n.classList.remove('active'));
+
+      progressLine.style.width = '0%';
+      progressLine.style.background = colorNeutral;
+      
+      expIcon.textContent = '👋';
+      expText.textContent = 'Pulsa "Iniciar simulación" para comenzar.';
+      
+      startBtn.style.display = 'inline-flex';
+      repeatBtn.style.display = 'none';
+    }
+
+    function setExplanation(icon, text) {
+      expIcon.textContent = icon;
+      expText.textContent = text;
+    }
+
+    function runAnimation() {
+      resetVisuals();
+      isRunning = true;
+      startBtn.style.display = 'none';
+
+      // PASO 1 (Entra ID)
+      timeouts.push(setTimeout(() => {
+        col1.classList.add('active');
+        el('num1').classList.add('active');
+        ecoEntra.classList.add('active');
+        ben2.classList.add('active'); 
+        ben7.classList.add('active'); 
+        
+        progressLine.style.width = '10%';
+        progressLine.style.background = colorEntra;
+        setExplanation('📦', 'Paso 1: El empleado enciende el equipo e inicia sesión. Entra ID P1 autentica (Zero Trust).');
+      }, 100));
+
+      // PASO 2 (Intune)
+      timeouts.push(setTimeout(() => {
+        col1.classList.remove('active');
+        el('num1').classList.remove('active');
+        
+        col2.classList.add('active');
+        el('num2').classList.add('active');
+        ecoIntune.classList.add('active');
+        ben1.classList.add('active'); 
+        ben3.classList.add('active'); 
+        
+        progressLine.style.width = '30%';
+        progressLine.style.background = colorIntune;
+        setExplanation('⚙️', 'Paso 2: Intune P1 aplica Windows Autopilot. El equipo se configura automáticamente (Zero-Touch).');
+      }, 5000));
+
+      // PASO 3 (Híbrido)
+      timeouts.push(setTimeout(() => {
+        col2.classList.remove('active');
+        el('num2').classList.remove('active');
+        
+        col3.classList.add('active');
+        el('num3').classList.add('active');
+        ecoEntra.classList.add('active');
+        ecoIntune.classList.add('active');
+        ben4.classList.add('active'); 
+        
+        progressLine.style.width = '50%';
+        progressLine.style.background = `linear-gradient(90deg, ${colorEntra}, ${colorIntune})`;
+        setExplanation('🛡️', 'Paso 3: Intune evalúa la salud (cifrado) y Entra ID permite el acceso si el equipo cumple (ISO/SOC).');
+      }, 10000));
+
+      // PASO 4 (Intune)
+      timeouts.push(setTimeout(() => {
+        col3.classList.remove('active');
+        el('num3').classList.remove('active');
+        
+        col4.classList.add('active');
+        el('num4').classList.add('active');
+        ecoEntra.classList.remove('active');
+        ben5.classList.add('active'); 
+        ben9.classList.add('active'); 
+        
+        progressLine.style.width = '75%';
+        progressLine.style.background = colorIntune;
+        setExplanation('📦', 'Paso 4: Intune P1 despliega las apps de Office y políticas de protección (MAM) para proteger datos.');
+      }, 15000));
+
+      // PASO 5 (Intune)
+      timeouts.push(setTimeout(() => {
+        col4.classList.remove('active');
+        el('num4').classList.remove('active');
+        
+        col5.classList.add('active');
+        el('num5').classList.add('active');
+        ben6.classList.add('active'); 
+        ben8.classList.add('active'); 
+        ben10.classList.add('active'); 
+        
+        progressLine.style.width = '100%';
+        progressLine.style.background = colorIntune;
+        setExplanation('📊', 'Paso 5: TI monitorea con Analytics, aplica parches (Autopatch) y da soporte, reduciendo el TCO.');
+      }, 20000));
+
+      // FIN
+      timeouts.push(setTimeout(() => {
+        isRunning = false;
+        repeatBtn.style.display = 'inline-flex';
+        setExplanation('🎉', '¡Ciclo completado! Intune P1 y Entra ID P1 habilitan los beneficios clave.');
+      }, 25000));
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (!isRunning) runAnimation();
+    });
+
+    repeatBtn.addEventListener('click', () => {
+      if (!isRunning) runAnimation();
+    });
+
+    window.addEventListener('beforeunload', () => {
+      timeouts.forEach(clearTimeout);
+    });
+  })();
+</script>
+</body>
+</html>
