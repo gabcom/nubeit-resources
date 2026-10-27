@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acceso Condicional · Animación Interactiva</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background: #eef3f8;
-      font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'Inter', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -53,7 +55,8 @@
       text-align: center;
       margin-bottom: 8px;
       flex-shrink: 0;
-      padding-left: 120px; /* espacio para el logo, sin desplazar demasiado */
+      padding-left: 120px;  /* espacio para el logo */
+      padding-right: 200px; /* espacio para el CTA superior derecho */
     }
 
     .case-badge {
@@ -79,6 +82,39 @@
       background: #fef2f2;
       color: #dc2626;
       border: 1px solid #ef4444;
+    }
+
+    /* ============================================
+       CTA superior derecho — armónico con la paleta
+       ============================================ */
+    .cta-top {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      z-index: 25;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #0077b5;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      padding: 9px 20px;
+      border-radius: 30px;
+      text-decoration: none;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 119, 181, 0.25);
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .cta-top:hover {
+      background: #005e93;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 119, 181, 0.35);
+    }
+    .cta-top:active {
+      transform: translateY(0);
     }
 
     .diagram-container {
@@ -440,6 +476,8 @@
       align-items: center;
       gap: 8px;
       box-shadow: 0 4px 12px rgba(0, 119, 181, 0.25);
+      text-decoration: none;
+      font-family: inherit;
     }
     .btn:hover { background: #005e93; transform: translateY(-2px); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -460,6 +498,13 @@
       .case-header {
         padding-left: 80px;
         padding-right: 10px;
+        padding-top: 40px; /* espacio para el CTA en móvil */
+      }
+      .cta-top {
+        top: 10px;
+        right: 12px;
+        font-size: 0.75rem;
+        padding: 7px 14px;
       }
       .diagram-container { flex-wrap: wrap; justify-content: center; gap: 25px; }
       .connectors { display: none; }
@@ -479,6 +524,10 @@
         font-size: 0.75rem;
         padding: 4px 10px;
       }
+      .cta-top {
+        font-size: 0.7rem;
+        padding: 6px 12px;
+      }
     }
   </style>
 </head>
@@ -487,6 +536,12 @@
   
   <!-- Logo NubeIT en la esquina superior izquierda -->
   <img src="https://www.nubeit.co/img/Logo_NubeIT.png" alt="NubeIT" class="nubeit-logo" />
+
+  <!-- CTA superior derecho -->
+  <a href="https://www.nubeit.co/microsoft365.html#roadmap" target="_blank" rel="noopener"
+     class="cta-top" id="ctaTop">
+    Descubre Microsoft 365
+  </a>
 
   <div class="case-header">
     <div class="case-badge neutral" id="caseBadge">🚀 Demostración de Acceso Condicional (Zero Trust)</div>
@@ -615,7 +670,6 @@
         const r = node.getBoundingClientRect();
         return { x: r.left - svgRect.left + r.width / 2, y: r.top - svgRect.top + r.height / 2 };
       };
-      const cCloud = getCenter(cloudSvg);
 
       const setPath = (pathEl, n1, n2) => {
         const c1 = getCenter(n1), c2 = getCenter(n2);
