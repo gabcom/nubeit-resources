@@ -35,9 +35,27 @@
       position: relative;
     }
 
+    /* Logo NubeIT en la esquina superior izquierda */
+    .nubeit-logo {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      height: 48px;
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+      z-index: 20;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.08));
+      transition: opacity 0.2s;
+    }
+    .nubeit-logo:hover {
+      opacity: 0.9;
+    }
+
     .header {
       text-align: center;
       margin-bottom: 5px;
+      padding-left: 120px; /* espacio para el logo, sin desplazar demasiado */
     }
 
     .header-title h1 {
@@ -384,16 +402,39 @@
       .diagram-container { flex-wrap: wrap; justify-content: center; gap: 20px; }
       .connectors { display: none; }
       .bottom-layout { grid-template-columns: 1fr; }
+      .nubeit-logo {
+        height: 36px;
+        top: 10px;
+        left: 12px;
+      }
+      .header {
+        padding-left: 80px;
+        padding-right: 10px;
+      }
     }
     @media (max-width: 600px) {
       .benefit-list { grid-template-columns: repeat(2, 1fr); }
       .explanation-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .nubeit-logo {
+        height: 30px;
+        top: 8px;
+        left: 8px;
+      }
+      .header {
+        padding-left: 60px;
+      }
+      .header-title h1 {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
 <div class="card">
   
+  <!-- Logo NubeIT en la esquina superior izquierda -->
+  <img src="https://www.nubeit.co/img/Logo_NubeIT.png" alt="NubeIT" class="nubeit-logo" />
+
   <div class="header">
     <div class="header-title">
       <h1>Microsoft Intune + Entra ID</h1>
