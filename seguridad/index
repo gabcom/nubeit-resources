@@ -1,1 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft 365 | Módulos de seguridad y gestión</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #eef3f8;
+    font-family: -apple-system, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #1f2937;
+  }
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px 32px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    width: 1100px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
 
+  .brand-logo {
+    position: absolute;
+    top: 22px; left: 32px;
+    height: 44px; width: auto; max-width: 180px;
+    object-fit: contain;
+    z-index: 5;
+  }
+
+  .header { text-align: center; margin-bottom: 24px; }
+  .header h1 { color: #183052; font-size: 1.5rem; margin-bottom: 6px; }
+  .header p { color: #64748b; font-size: .92rem; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 36px;
+    align-items: center;
+  }
+
+  /* ---- ÓRBITA ---- */
+  .orbitArea {
+    position: relative;
+    width: 380px;
+    height: 380px;
+    margin: 0 auto;
+  }
+  .orbit {
+    position: absolute;
+    inset: 8%;
+    border: 2px solid #b8d7ea;
+    border-radius: 50%;
+    box-shadow: 0 0 0 8px #2793d10b, inset 0 0 20px #2793d10b;
+  }
+
+  /* Centro: Microsoft 365 */
+  .center {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 140px; height: 140px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 30;
+  }
+  .center svg {
+    display: block;
+    width: 75px; height: 75px;
+    flex: none;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.15));
+  }
+  .center .label {
+    margin-top: 8px;
+    font-size: 12px; color: #183052; line-height: 1.2;
+    font-weight: 700; letter-spacing: .2px; text-align: center;
+  }
+
+  /* Nodos orbitando */
+  .orbitNodes {
+    position: absolute; inset: 0;
+    animation: orbitSpin 55s linear infinite;
+    z-index: 3;
+  }
+  .orbitArea:hover .orbitNodes,
+  .orbitArea:hover .node {
+    animation-play-state: paused;
+  }
+
+  .node {
+    position: absolute;
+    width: 84px; height: 84px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 3;
+    transform: translate(-50%, -50%);
+    animation: orbitCounter 55s linear infinite;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background .25s;
+  }
+  .node:hover { background: #e1f5fe; }
+  .node[data-step="0"] { left: 50%; top: 8%; }
+  .node[data-step="1"] { left: 92%; top: 50%; }
+  .node[data-step="2"] { left: 50%; top: 92%; }
+  .node[data-step="3"] { left: 8%; top: 50%; }
+
+  .moduleIcon {
+    width: 32px; height: 32px; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    transition: filter .3s, transform .3s;
+  }
+  .moduleIcon svg {
+    display: block;
+    width: 32px; height: 32px;
+    flex: none;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.15));
+  }
+  .node .name {
+    font-size: 10px; font-weight: 700; text-align: center;
+    color: #475569; margin-top: 6px; width: 84px;
+    line-height: 1.2; position: relative; z-index: 4;
+  }
+  .node.active .moduleIcon { filter: drop-shadow(0 0 16px #2793d1aa); transform: scale(1.12); }
+  .node.active .name { color: #183052; }
+  .node.active { background: #e1f5fe; }
+
+  @keyframes orbitSpin { to { transform: rotate(360deg); } }
+  @keyframes orbitCounter { to { transform: translate(-50%, -50%) rotate(-360deg); } }
+
+  .license-note {
+    text-align: center;
+    margin-top: 6px;
+    font-size: .74rem;
+    color: #94a3b8;
+  }
+
+  .hint {
+    text-align: center;
+    margin-top: 20px;
+    font-size: .8rem;
+    color: #64748b;
+  }
+
+  /* ---- PANEL DERECHO ---- */
+  .info-panel {
+    border: 1px solid #dbe4ed;
+    border-radius: 16px;
+    background: #f8fbfd;
+    padding: 26px;
+    min-height: 360px;
+    box-shadow: 0 5px 18px rgba(0,0,0,.04);
+    transition: all .3s;
+  }
+  .info-panel .info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .info-panel .info-icon svg {
+    display: block;
+    width: 64px; height: 64px;
+    flex: none;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.15));
+  }
+  .info-panel h2 {
+    color: #183052;
+    font-size: 1.25rem;
+    margin: 4px 0 10px;
+    text-align: center;
+  }
+  .info-panel .subtitle {
+    text-align: center;
+    color: #64748b;
+    font-size: .85rem;
+    margin-bottom: 16px;
+  }
+  .info-panel ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .info-panel ul li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: .88rem;
+    line-height: 1.4;
+    color: #334155;
+    background: #fff;
+    border: 1px solid #e8eef4;
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: all .25s;
+  }
+  .info-panel ul li:hover {
+    border-color: #b8d7ea;
+    box-shadow: 0 2px 8px rgba(39,147,209,.1);
+    transform: translateX(3px);
+  }
+  .info-panel ul li .bullet {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .info-panel .placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 300px;
+    color: #94a3b8;
+    gap: 12px;
+  }
+  .info-panel .placeholder .big { font-size: 3rem; }
+
+  @media (max-width: 900px) {
+    .brand-logo { position: static; align-self: flex-start; margin-bottom: 12px; }
+    .layout { grid-template-columns: 1fr; }
+    .orbitArea { width: 320px; height: 320px; }
+    .info-panel { min-height: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <img class="brand-logo" src="https://www.nubeit.co/img/Logo_NubeIT.png" alt="Nube IT">
+
+  <div class="header">
+    <h1>Microsoft 365 | Ecosistema de seguridad y gestión</h1>
+    <p>Haz clic en cada módulo de la órbita para descubrir sus funcionalidades.</p>
+  </div>
+
+  <div class="layout">
+
+    <!-- ÓRBITA -->
+    <div class="orbitArea" id="orbitArea">
+      <div class="orbit"></div>
+
+      <!-- Centro: Microsoft 365 -->
+      <div class="center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="23.3 -0.05 465.5 512.07" width="75" height="75" preserveAspectRatio="xMidYMid meet" aria-label="Microsoft 365">
+<radialGradient id="m365_a" cx="-44.794" cy="657.774" r="11.637" gradientTransform="matrix(-11.7002 31.247 54.5012 20.4075 -36194.156 -11923.366)" gradientUnits="userSpaceOnUse"><stop offset=".064" style="stop-color:#ae7fe2"/><stop offset="1" style="stop-color:#0078d4"/></radialGradient><path d="m210.4 11.9-2.6 1.6q-6.3 3.75-11.7 8.4l7.5-5.3h64l11.6 88.1-58.2 58.2-58.2 40.4V250c0 32.6 17 62.8 44.9 79.6l61.3 37.1-129.4 75.5h-25L68.2 414c-27.9-16.9-44.9-47.1-44.9-79.6V177.6c0-32.6 17-62.8 44.9-79.7l139.6-84.5c.9-.5 1.8-1 2.6-1.5" style="fill:url(#m365_a)"/><linearGradient id="m365_b" x1="253.635" x2="198.236" y1="138.912" y2="234.727" gradientTransform="matrix(1 0 0 -1 0 514)" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:#114a8b"/><stop offset="1" style="stop-color:#0078d4;stop-opacity:0"/></linearGradient><path d="m210.4 11.9-2.6 1.6q-6.3 3.75-11.7 8.4l7.5-5.3h64l11.6 88.1-58.2 58.2-58.2 40.4V250c0 32.6 17 62.8 44.9 79.6l61.3 37.1-129.4 75.5h-25L68.2 414c-27.9-16.9-44.9-47.1-44.9-79.6V177.6c0-32.6 17-62.8 44.9-79.7l139.6-84.5c.9-.5 1.8-1 2.6-1.5" style="fill:url(#m365_b)"/><radialGradient id="m365_c" cx="-47" cy="627.798" r="11.637" gradientTransform="matrix(30.7198 -4.5183 -2.9847 -20.2925 3415.678 12926.943)" gradientUnits="userSpaceOnUse"><stop offset=".134" style="stop-color:#d59dff"/><stop offset="1" style="stop-color:#5e438f"/></radialGradient><path d="M349.1 197.8v52.1c0 32.6-17 62.8-44.9 79.6L164.6 414c-28.6 17.4-64.1 18-93.2 2l136.4 82.6c29.6 17.9 66.8 17.9 96.4 0L443.8 414c27.9-16.9 44.9-47.1 44.9-79.6v-37.7l-11.6-17.5z" style="fill:url(#m365_c)"/><linearGradient id="m365_d" x1="389.743" x2="330.378" y1="281.462" y2="196.34" gradientTransform="matrix(1 0 0 -1 0 514)" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:#493474"/><stop offset="1" style="stop-color:#8c66ba;stop-opacity:0"/></linearGradient><path d="M349.1 197.8v52.1c0 32.6-17 62.8-44.9 79.6L164.6 414c-28.6 17.4-64.1 18-93.2 2l136.4 82.6c29.6 17.9 66.8 17.9 96.4 0L443.8 414c27.9-16.9 44.9-47.1 44.9-79.6v-37.7l-11.6-17.5z" style="fill:url(#m365_d)"/><radialGradient id="m365_e" cx="-70.906" cy="659.478" r="11.637" gradientTransform="matrix(-24.1583 -6.1256 -10.3118 40.6682 5541.9 -26969.008)" gradientUnits="userSpaceOnUse"><stop offset=".058" style="stop-color:#50e6ff"/><stop offset="1" style="stop-color:#436dcd"/></radialGradient><path d="M443.8 97.9 304.2 13.4C275.5-4 239.8-4.5 210.6 11.8l-2.8 1.7a93.13 93.13 0 0 0-44.9 79.7v110.4l44.9-27.2c29.6-17.9 66.7-17.9 96.4 0l139.6 84.5c27 16.3 43.8 45.2 44.9 76.6 0-1 .1-2 .1-3.1V177.6c-.1-32.6-17.1-62.8-45-79.7" style="fill:url(#m365_e)"/><linearGradient id="m365_f" x1="174.261" x2="261.665" y1="345.286" y2="345.286" gradientTransform="matrix(1 0 0 -1 0 514)" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:#2d3f80"/><stop offset="1" style="stop-color:#436dcd;stop-opacity:0"/></linearGradient><path d="M443.8 97.9 304.2 13.4C275.5-4 239.8-4.5 210.6 11.8l-2.8 1.7a93.13 93.13 0 0 0-44.9 79.7v110.4l44.9-27.2c29.6-17.9 66.7-17.9 96.4 0l139.6 84.5c27 16.3 43.8 45.2 44.9 76.6 0-1 .1-2 .1-3.1V177.6c-.1-32.6-17.1-62.8-45-79.7" style="fill:url(#m365_f)"/>
+</svg>
+        <div class="label">Microsoft 365</div>
+      </div>
+
+      <div class="orbitNodes">
+
+        <!-- Microsoft Defender -->
+        <div class="node" data-step="0" data-module="defender">
+          <div class="moduleIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="-7.74 0.00 401.32 401.32" width="32" height="32" preserveAspectRatio="xMidYMid meet" aria-label="Defender">
+<defs><linearGradient id="def_a" x1="564.08" y1="144.16" x2="399.95" y2="428.44" gradientTransform="matrix(1, 0, 0, -1, 0, 770)" gradientUnits="userSpaceOnUse"><stop offset="0.37" stop-color="#114a8b"/><stop offset="1" stop-color="#0c59a4"/></linearGradient><linearGradient id="def_b" x1="402.18" y1="195.84" x2="262.61" y2="437.59" gradientTransform="matrix(1, 0, 0, -1, 0, 770)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0669bc"/><stop offset="1" stop-color="#0078d4"/></linearGradient><linearGradient id="def_c" x1="528.83" y1="360.36" x2="390.83" y2="599.36" gradientTransform="matrix(1, 0, 0, -1, 0, 770)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0078d4"/><stop offset="1" stop-color="#1493df"/></linearGradient><linearGradient id="def_d" x1="353.62" y1="380.7" x2="215.62" y2="619.71" gradientTransform="matrix(1, 0, 0, -1, 0, 770)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#28afea"/><stop offset="0.74" stop-color="#3ccbf4"/></linearGradient></defs><path d="M384,584.66a13.55,13.55,0,0,0,6.72-1.76C490.33,525.46,556.76,461,573,376.28q.42-2.19.79-4.38L370.69,358.45Z" transform="translate(-191.08 -183.34)" style="fill:url(#def_a)"/><path d="M377.27,582.9a13.54,13.54,0,0,0,6.72,1.76V358.44L194.23,371.89q.38,2.2.79,4.38C211.24,461,277.66,525.45,377.27,582.89Z" transform="translate(-191.08 -183.34)" style="fill:url(#def_b)"/><path d="M576.92,249a13.1,13.1,0,0,0-12.74-13.15c-60.25-1.24-81.56-11.65-111.27-31.7A117.71,117.71,0,0,0,384,183.36l-20,188.4H573.79a213,213,0,0,0,3.12-36Z" transform="translate(-191.08 -183.34)" style="fill:url(#def_c)"/><path d="M384,183.36a117.71,117.71,0,0,0-68.9,20.79c-29.72,20.06-51,30.47-111.27,31.7A13.1,13.1,0,0,0,191.08,249v86.8a213,213,0,0,0,3.12,36H384Z" transform="translate(-191.08 -183.34)" style="fill:url(#def_d)"/>
+</svg>
+          </div>
+          <div class="name">Defender</div>
+        </div>
+
+        <!-- Microsoft Purview -->
+        <div class="node" data-step="1" data-module="purview">
+          <div class="moduleIcon">
+            <svg viewBox="9.26 5.66 45.49 45.49" width="32" height="32" preserveAspectRatio="xMidYMid meet" aria-label="Purview">
+              <defs>
+                <linearGradient id="purG1" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#6ee2ff"/>
+                  <stop offset="100%" stop-color="#0088e0"/>
+                </linearGradient>
+                <linearGradient id="purG2" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#0078d4"/>
+                  <stop offset="100%" stop-color="#0b3b8c"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#purG1)" d="M27.5 10.5c2.1-3.6 6.9-3.6 9 0l17.5 30.3c2.1 3.6-.5 8.2-4.7 8.2H35c3.5 0 5.5-3.8 3.7-6.8L27.5 22.8c-1.1-1.9-2.5-2.6-3.7-2.6l3.7-9.7z"/>
+              <path fill="url(#purG2)" d="M35 49h14.3c4.2 0 6.8-4.6 4.7-8.2L44.8 25c-1.2 6.2-4.8 11.8-9.2 15.8-2.6 2.4-3.6 5.4-2.6 8.2H35z"/>
+              <path fill="url(#purG1)" d="M27.5 10.5L10 40.8c-2.1 3.6.5 8.2 4.7 8.2h34.6c-3.5 0-5.5-3.8-3.7-6.8l-1-1.7c-3.2-5.4-10.3-6.8-15.4-3.1-2.4 1.7-4.1 4-5 6.5-1.1-2.6-.9-6 1-9.3l6.2-10.8c1.1-1.9 1-3.3 0-4.3l1.1-6z"/>
+            </svg>
+          </div>
+          <div class="name">Purview</div>
+        </div>
+
+        <!-- Microsoft Intune -->
+        <div class="node" data-step="2" data-module="intune">
+          <div class="moduleIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0.69 0.71 400.00 400.00" width="32" height="32" preserveAspectRatio="xMidYMid meet" aria-label="Intune">
+<g clip-path="url(#int_clip0_10641_164)">
+<path d="M0.685165 65.8523C0.685165 14.7648 67.4855 -13.2029 111.616 19.4083L207.551 90.2535L288.514 44.373C331.305 21.0394 399.874 37.7748 400.685 101.559L400.685 336.622C400.685 387.71 335.845 414.343 291.715 381.732L194.031 309.34L112.973 355.23C69.7783 378.784 0.752625 360.714 0.752625 298.637C0.752654 224.124 0.685165 252.734 0.685165 65.8523Z" fill="url(#int_paint0_linear_10641_164)"/>
+<path d="M0.685165 65.8523C0.685165 14.7648 67.4855 -13.2029 111.616 19.4083L207.551 90.2535L288.514 44.373C331.305 21.0394 399.874 37.7748 400.685 101.559L400.685 336.622C400.685 387.71 335.845 414.343 291.715 381.732L194.031 309.34L112.973 355.23C69.7783 378.784 0.752625 360.714 0.752625 298.637C0.752654 224.124 0.685165 252.734 0.685165 65.8523Z" fill="url(#int_paint1_radial_10641_164)"/>
+<path d="M0.685165 65.8523C0.685165 14.7648 67.4855 -13.2029 111.616 19.4083L207.551 90.2535L288.514 44.373C331.305 21.0394 399.874 37.7748 400.685 101.559L400.685 336.622C400.685 387.71 335.845 414.343 291.715 381.732L194.031 309.34L112.973 355.23C69.7783 378.784 0.752625 360.714 0.752625 298.637C0.752654 224.124 0.685165 252.734 0.685165 65.8523Z" fill="url(#int_paint2_radial_10641_164)"/>
+<path d="M111.616 19.4083C67.4855 -13.2029 0.685165 14.7648 0.685165 65.8523V295.742C0.685165 290.153 3.5327 279.026 3.5327 279.026C16.6954 236.001 72.6487 219.869 111.36 248.223L291.715 381.732C335.845 414.343 400.685 387.71 400.685 336.622V101.559C400.685 145.201 343.643 189.011 289.755 151.051L111.616 19.4083Z" fill="url(#int_paint3_radial_10641_164)"/>
+<path d="M111.616 19.4083C67.4855 -13.2029 0.685165 14.7648 0.685165 65.8523V295.742C0.685165 290.153 3.5327 279.026 3.5327 279.026C16.6954 236.001 72.6487 219.869 111.36 248.223L291.715 381.732C335.845 414.343 400.685 387.71 400.685 336.622V101.559C400.685 145.201 343.643 189.011 289.755 151.051L111.616 19.4083Z" fill="url(#int_paint4_radial_10641_164)" fill-opacity="0.25"/>
+<path d="M111.616 19.4083C67.4855 -13.2029 0.685165 14.7648 0.685165 65.8523V295.742C0.685165 290.153 3.5327 279.026 3.5327 279.026C16.6954 236.001 72.6487 219.869 111.36 248.223L291.715 381.732C335.845 414.343 400.685 387.71 400.685 336.622V101.559C400.685 145.201 343.643 189.011 289.755 151.051L111.616 19.4083Z" fill="url(#int_paint5_radial_10641_164)" fill-opacity="0.55"/>
+<path d="M111.616 149.691C67.4855 117.08 0.685165 145.048 0.685165 196.135L0.685179 65.8523C0.685183 14.7648 67.4855 -13.2029 111.616 19.4083C170.996 63.2888 230.374 107.171 289.755 151.051C343.643 189.011 400.685 145.201 400.685 101.559V234.89C400.685 285.978 333.885 313.946 289.755 281.334C230.374 237.454 170.996 193.572 111.616 149.691Z" fill="url(#int_paint6_linear_10641_164)"/>
+<path d="M111.616 149.691C67.4855 117.08 0.685165 145.048 0.685165 196.135L0.685179 65.8523C0.685183 14.7648 67.4855 -13.2029 111.616 19.4083C170.996 63.2888 230.374 107.171 289.755 151.051C343.643 189.011 400.685 145.201 400.685 101.559V234.89C400.685 285.978 333.885 313.946 289.755 281.334C230.374 237.454 170.996 193.572 111.616 149.691Z" fill="url(#int_paint7_radial_10641_164)" fill-opacity="0.35"/>
+</g>
+<defs>
+<linearGradient id="int_paint0_linear_10641_164" x1="171.501" y1="396.026" x2="314.256" y2="90.5646" gradientUnits="userSpaceOnUse">
+<stop offset="0.02" stop-color="#1169DA"/>
+<stop offset="0.434784" stop-color="#0151BD"/>
+<stop offset="0.614436" stop-color="#014DB7"/>
+<stop offset="1" stop-color="#126AD9"/>
+</linearGradient>
+<radialGradient id="int_paint1_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(358.656 -48.704) rotate(110.224) scale(292.248 218.917)">
+<stop offset="0.422966" stop-color="#004AFF" stop-opacity="0.1"/>
+<stop offset="0.728672" stop-color="#014DB9"/>
+<stop offset="0.836135" stop-color="#014DB9" stop-opacity="0.9"/>
+<stop offset="0.955" stop-color="#014DB9" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="int_paint2_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(54.0821 384.087) rotate(-73.6432) scale(232.668 283.419)">
+<stop offset="0.0908532" stop-color="#004AFF" stop-opacity="0.1"/>
+<stop offset="0.56036" stop-color="#014DB9"/>
+<stop offset="0.749466" stop-color="#014DB9" stop-opacity="0.99"/>
+<stop offset="1" stop-color="#014DB9" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="int_paint3_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(439.444 5.40101) rotate(134.068) scale(563.957 434.374)">
+<stop offset="0.249322" stop-color="#23C0FE"/>
+<stop offset="0.717207" stop-color="#23C0FE"/>
+<stop offset="0.995168" stop-color="#1C91FF"/>
+</radialGradient>
+<radialGradient id="int_paint4_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(119.961 37.1103) rotate(45.9092) scale(403.457 95.9789)">
+<stop offset="0.165" stop-color="#096DD6" stop-opacity="0"/>
+<stop offset="0.484233" stop-color="#096DD6"/>
+<stop offset="0.900505" stop-color="#0876DE" stop-opacity="0.813868"/>
+<stop offset="1" stop-color="#029AFF" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="int_paint5_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(385.776 245.022) rotate(91.6099) scale(64.799 58.3555)">
+<stop stop-color="#0068B3"/>
+<stop offset="0.93" stop-color="#006CB8" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="int_paint6_linear_10641_164" x1="114.72" y1="97.5227" x2="182.067" y2="383.699" gradientUnits="userSpaceOnUse">
+<stop stop-color="#92EEFE"/>
+<stop offset="0.564559" stop-color="#35DDFF"/>
+<stop offset="1" stop-color="#08B1F9"/>
+</linearGradient>
+<radialGradient id="int_paint7_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(67.7807 5.4011) rotate(69.461) scale(99.6637 80.4988)">
+<stop stop-color="#CCF9FF" stop-opacity="0.93"/>
+<stop offset="1" stop-color="#35DDFF"/>
+</radialGradient>
+<clipPath id="int_clip0_10641_164">
+<rect width="400" height="400" fill="white" transform="translate(0.685181 0.713501)"/>
+</clipPath>
+</defs>
+</svg>
+          </div>
+          <div class="name">Intune</div>
+        </div>
+
+        <!-- Microsoft Entra ID -->
+        <div class="node" data-step="3" data-module="entra">
+          <div class="moduleIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0.00 0.00 18.00 18.00" width="32" height="32" preserveAspectRatio="xMidYMid meet" aria-label="Entra ID">
+<path d="m3.802,14.032c.388.242,1.033.511,1.715.511.621,0,1.198-.18,1.676-.487,0,0,.001,0,.002-.001l1.805-1.128v4.073c-.286,0-.574-.078-.824-.234l-4.374-2.734Z" fill="#225086"/>
+  <path d="m7.853,1.507L.353,9.967c-.579.654-.428,1.642.323,2.111,0,0,2.776,1.735,3.126,1.954.388.242,1.033.511,1.715.511.621,0,1.198-.18,1.676-.487,0,0,.001,0,.002-.001l1.805-1.128-4.364-2.728,4.365-4.924V1s0,0,0,0c-.424,0-.847.169-1.147.507Z" fill="#6df"/>
+  <polygon points="4.636 10.199 4.688 10.231 9 12.927 9.001 12.927 9.001 12.927 9.001 5.276 9 5.275 4.636 10.199" fill="#cbf8ff"/>
+  <path d="m17.324,12.078c.751-.469.902-1.457.323-2.111l-4.921-5.551c-.397-.185-.842-.291-1.313-.291-.925,0-1.752.399-2.302,1.026l-.109.123h0s4.364,4.924,4.364,4.924h0s0,0,0,0l-4.365,2.728v4.073c.287,0,.573-.078.823-.234l7.5-4.688Z" fill="#074793"/>
+  <path d="m9.001,1v4.275s.109-.123.109-.123c.55-.627,1.377-1.026,2.302-1.026.472,0,.916.107,1.313.291l-2.579-2.909c-.299-.338-.723-.507-1.146-.507Z" fill="#0294e4"/>
+  <polygon points="13.365 10.199 13.365 10.199 13.365 10.199 9.001 5.276 9.001 12.926 13.365 10.199" fill="#96bcc2"/>
+</svg>
+          </div>
+          <div class="name">Entra ID</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL INFORMATIVO -->
+    <div class="info-panel" id="infoPanel">
+      <div class="placeholder">
+        <div class="big">👆</div>
+        <div>Selecciona un módulo de la órbita<br>para ver sus funcionalidades.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="hint">💡 La órbita gira automáticamente y se pausa solo mientras el mouse está encima.</div>
+  <div class="license-note">Algunas funciones dependen del plan de licenciamiento (por ejemplo Microsoft 365 E3/E5, Entra ID P1/P2 o Defender for Office 365 Plan 2). Verifica la disponibilidad en tu licencia.</div>
+</div>
+
+<script>
+(function(){
+  const orbitArea = document.getElementById('orbitArea');
+  const panel = document.getElementById('infoPanel');
+
+  const icons = {
+    defender: `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 385.84 401.32" width="64" height="64" preserveAspectRatio="xMidYMid meet" aria-label="Defender">
+<defs><linearGradient id="defP_a" x1="564.08" y1="144.16" x2="399.95" y2="428.44" gradientTransform="matrix(1, 0, 0, -1, 0, 770)" gradientUnits="userSpaceOnUse"><stop offset="0.37" stop-color="#114a8b"/><stop offset="1" stop-color="#0c59a4"/></linearGradient><linearGradient id="defP_b" x1="402.18" y1="195.84" x2="262.61" y2="437.59" gradientTransform="matrix(1, 0, 0, -1, 0, 770)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0669bc"/><stop offset="1" stop-color="#0078d4"/></linearGradient><linearGradient id="defP_c" x1="528.83" y1="360.36" x2="390.83" y2="599.36" gradientTransform="matrix(1, 0, 0, -1, 0, 770)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0078d4"/><stop offset="1" stop-color="#1493df"/></linearGradient><linearGradient id="defP_d" x1="353.62" y1="380.7" x2="215.62" y2="619.71" gradientTransform="matrix(1, 0, 0, -1, 0, 770)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#28afea"/><stop offset="0.74" stop-color="#3ccbf4"/></linearGradient></defs><path d="M384,584.66a13.55,13.55,0,0,0,6.72-1.76C490.33,525.46,556.76,461,573,376.28q.42-2.19.79-4.38L370.69,358.45Z" transform="translate(-191.08 -183.34)" style="fill:url(#defP_a)"/><path d="M377.27,582.9a13.54,13.54,0,0,0,6.72,1.76V358.44L194.23,371.89q.38,2.2.79,4.38C211.24,461,277.66,525.45,377.27,582.89Z" transform="translate(-191.08 -183.34)" style="fill:url(#defP_b)"/><path d="M576.92,249a13.1,13.1,0,0,0-12.74-13.15c-60.25-1.24-81.56-11.65-111.27-31.7A117.71,117.71,0,0,0,384,183.36l-20,188.4H573.79a213,213,0,0,0,3.12-36Z" transform="translate(-191.08 -183.34)" style="fill:url(#defP_c)"/><path d="M384,183.36a117.71,117.71,0,0,0-68.9,20.79c-29.72,20.06-51,30.47-111.27,31.7A13.1,13.1,0,0,0,191.08,249v86.8a213,213,0,0,0,3.12,36H384Z" transform="translate(-191.08 -183.34)" style="fill:url(#defP_d)"/>
+</svg>
+    `,
+    purview: `
+      <svg viewBox="0 0 64 64" width="64" height="64" preserveAspectRatio="xMidYMid meet" aria-label="Purview">
+        <defs>
+          <linearGradient id="purG1P" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#6ee2ff"/>
+            <stop offset="100%" stop-color="#0088e0"/>
+          </linearGradient>
+          <linearGradient id="purG2P" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0078d4"/>
+            <stop offset="100%" stop-color="#0b3b8c"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#purG1P)" d="M27.5 10.5c2.1-3.6 6.9-3.6 9 0l17.5 30.3c2.1 3.6-.5 8.2-4.7 8.2H35c3.5 0 5.5-3.8 3.7-6.8L27.5 22.8c-1.1-1.9-2.5-2.6-3.7-2.6l3.7-9.7z"/>
+        <path fill="url(#purG2P)" d="M35 49h14.3c4.2 0 6.8-4.6 4.7-8.2L44.8 25c-1.2 6.2-4.8 11.8-9.2 15.8-2.6 2.4-3.6 5.4-2.6 8.2H35z"/>
+        <path fill="url(#purG1P)" d="M27.5 10.5L10 40.8c-2.1 3.6.5 8.2 4.7 8.2h34.6c-3.5 0-5.5-3.8-3.7-6.8l-1-1.7c-3.2-5.4-10.3-6.8-15.4-3.1-2.4 1.7-4.1 4-5 6.5-1.1-2.6-.9-6 1-9.3l6.2-10.8c1.1-1.9 1-3.3 0-4.3l1.1-6z"/>
+      </svg>
+    `,
+    intune: `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0.69 5.4 400 390.62" width="64" height="64" preserveAspectRatio="xMidYMid meet" aria-label="Intune">
+<g clip-path="url(#intP_clip0_10641_164)">
+<path d="M0.685165 65.8523C0.685165 14.7648 67.4855 -13.2029 111.616 19.4083L207.551 90.2535L288.514 44.373C331.305 21.0394 399.874 37.7748 400.685 101.559L400.685 336.622C400.685 387.71 335.845 414.343 291.715 381.732L194.031 309.34L112.973 355.23C69.7783 378.784 0.752625 360.714 0.752625 298.637C0.752654 224.124 0.685165 252.734 0.685165 65.8523Z" fill="url(#intP_paint0_linear_10641_164)"/>
+<path d="M0.685165 65.8523C0.685165 14.7648 67.4855 -13.2029 111.616 19.4083L207.551 90.2535L288.514 44.373C331.305 21.0394 399.874 37.7748 400.685 101.559L400.685 336.622C400.685 387.71 335.845 414.343 291.715 381.732L194.031 309.34L112.973 355.23C69.7783 378.784 0.752625 360.714 0.752625 298.637C0.752654 224.124 0.685165 252.734 0.685165 65.8523Z" fill="url(#intP_paint1_radial_10641_164)"/>
+<path d="M0.685165 65.8523C0.685165 14.7648 67.4855 -13.2029 111.616 19.4083L207.551 90.2535L288.514 44.373C331.305 21.0394 399.874 37.7748 400.685 101.559L400.685 336.622C400.685 387.71 335.845 414.343 291.715 381.732L194.031 309.34L112.973 355.23C69.7783 378.784 0.752625 360.714 0.752625 298.637C0.752654 224.124 0.685165 252.734 0.685165 65.8523Z" fill="url(#intP_paint2_radial_10641_164)"/>
+<path d="M111.616 19.4083C67.4855 -13.2029 0.685165 14.7648 0.685165 65.8523V295.742C0.685165 290.153 3.5327 279.026 3.5327 279.026C16.6954 236.001 72.6487 219.869 111.36 248.223L291.715 381.732C335.845 414.343 400.685 387.71 400.685 336.622V101.559C400.685 145.201 343.643 189.011 289.755 151.051L111.616 19.4083Z" fill="url(#intP_paint3_radial_10641_164)"/>
+<path d="M111.616 19.4083C67.4855 -13.2029 0.685165 14.7648 0.685165 65.8523V295.742C0.685165 290.153 3.5327 279.026 3.5327 279.026C16.6954 236.001 72.6487 219.869 111.36 248.223L291.715 381.732C335.845 414.343 400.685 387.71 400.685 336.622V101.559C400.685 145.201 343.643 189.011 289.755 151.051L111.616 19.4083Z" fill="url(#intP_paint4_radial_10641_164)" fill-opacity="0.25"/>
+<path d="M111.616 19.4083C67.4855 -13.2029 0.685165 14.7648 0.685165 65.8523V295.742C0.685165 290.153 3.5327 279.026 3.5327 279.026C16.6954 236.001 72.6487 219.869 111.36 248.223L291.715 381.732C335.845 414.343 400.685 387.71 400.685 336.622V101.559C400.685 145.201 343.643 189.011 289.755 151.051L111.616 19.4083Z" fill="url(#intP_paint5_radial_10641_164)" fill-opacity="0.55"/>
+<path d="M111.616 149.691C67.4855 117.08 0.685165 145.048 0.685165 196.135L0.685179 65.8523C0.685183 14.7648 67.4855 -13.2029 111.616 19.4083C170.996 63.2888 230.374 107.171 289.755 151.051C343.643 189.011 400.685 145.201 400.685 101.559V234.89C400.685 285.978 333.885 313.946 289.755 281.334C230.374 237.454 170.996 193.572 111.616 149.691Z" fill="url(#intP_paint6_linear_10641_164)"/>
+<path d="M111.616 149.691C67.4855 117.08 0.685165 145.048 0.685165 196.135L0.685179 65.8523C0.685183 14.7648 67.4855 -13.2029 111.616 19.4083C170.996 63.2888 230.374 107.171 289.755 151.051C343.643 189.011 400.685 145.201 400.685 101.559V234.89C400.685 285.978 333.885 313.946 289.755 281.334C230.374 237.454 170.996 193.572 111.616 149.691Z" fill="url(#intP_paint7_radial_10641_164)" fill-opacity="0.35"/>
+</g>
+<defs>
+<linearGradient id="intP_paint0_linear_10641_164" x1="171.501" y1="396.026" x2="314.256" y2="90.5646" gradientUnits="userSpaceOnUse">
+<stop offset="0.02" stop-color="#1169DA"/>
+<stop offset="0.434784" stop-color="#0151BD"/>
+<stop offset="0.614436" stop-color="#014DB7"/>
+<stop offset="1" stop-color="#126AD9"/>
+</linearGradient>
+<radialGradient id="intP_paint1_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(358.656 -48.704) rotate(110.224) scale(292.248 218.917)">
+<stop offset="0.422966" stop-color="#004AFF" stop-opacity="0.1"/>
+<stop offset="0.728672" stop-color="#014DB9"/>
+<stop offset="0.836135" stop-color="#014DB9" stop-opacity="0.9"/>
+<stop offset="0.955" stop-color="#014DB9" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="intP_paint2_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(54.0821 384.087) rotate(-73.6432) scale(232.668 283.419)">
+<stop offset="0.0908532" stop-color="#004AFF" stop-opacity="0.1"/>
+<stop offset="0.56036" stop-color="#014DB9"/>
+<stop offset="0.749466" stop-color="#014DB9" stop-opacity="0.99"/>
+<stop offset="1" stop-color="#014DB9" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="intP_paint3_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(439.444 5.40101) rotate(134.068) scale(563.957 434.374)">
+<stop offset="0.249322" stop-color="#23C0FE"/>
+<stop offset="0.717207" stop-color="#23C0FE"/>
+<stop offset="0.995168" stop-color="#1C91FF"/>
+</radialGradient>
+<radialGradient id="intP_paint4_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(119.961 37.1103) rotate(45.9092) scale(403.457 95.9789)">
+<stop offset="0.165" stop-color="#096DD6" stop-opacity="0"/>
+<stop offset="0.484233" stop-color="#096DD6"/>
+<stop offset="0.900505" stop-color="#0876DE" stop-opacity="0.813868"/>
+<stop offset="1" stop-color="#029AFF" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="intP_paint5_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(385.776 245.022) rotate(91.6099) scale(64.799 58.3555)">
+<stop stop-color="#0068B3"/>
+<stop offset="0.93" stop-color="#006CB8" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="intP_paint6_linear_10641_164" x1="114.72" y1="97.5227" x2="182.067" y2="383.699" gradientUnits="userSpaceOnUse">
+<stop stop-color="#92EEFE"/>
+<stop offset="0.564559" stop-color="#35DDFF"/>
+<stop offset="1" stop-color="#08B1F9"/>
+</linearGradient>
+<radialGradient id="intP_paint7_radial_10641_164" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(67.7807 5.4011) rotate(69.461) scale(99.6637 80.4988)">
+<stop stop-color="#CCF9FF" stop-opacity="0.93"/>
+<stop offset="1" stop-color="#35DDFF"/>
+</radialGradient>
+<clipPath id="intP_clip0_10641_164">
+<rect width="400" height="400" fill="white" transform="translate(0.685181 0.713501)"/>
+</clipPath>
+</defs>
+</svg>
+    `,
+    entra: `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="64" height="64" preserveAspectRatio="xMidYMid meet" aria-label="Entra ID">
+<path d="m3.802,14.032c.388.242,1.033.511,1.715.511.621,0,1.198-.18,1.676-.487,0,0,.001,0,.002-.001l1.805-1.128v4.073c-.286,0-.574-.078-.824-.234l-4.374-2.734Z" fill="#225086"/>
+  <path d="m7.853,1.507L.353,9.967c-.579.654-.428,1.642.323,2.111,0,0,2.776,1.735,3.126,1.954.388.242,1.033.511,1.715.511.621,0,1.198-.18,1.676-.487,0,0,.001,0,.002-.001l1.805-1.128-4.364-2.728,4.365-4.924V1s0,0,0,0c-.424,0-.847.169-1.147.507Z" fill="#6df"/>
+  <polygon points="4.636 10.199 4.688 10.231 9 12.927 9.001 12.927 9.001 12.927 9.001 5.276 9 5.275 4.636 10.199" fill="#cbf8ff"/>
+  <path d="m17.324,12.078c.751-.469.902-1.457.323-2.111l-4.921-5.551c-.397-.185-.842-.291-1.313-.291-.925,0-1.752.399-2.302,1.026l-.109.123h0s4.364,4.924,4.364,4.924h0s0,0,0,0l-4.365,2.728v4.073c.287,0,.573-.078.823-.234l7.5-4.688Z" fill="#074793"/>
+  <path d="m9.001,1v4.275s.109-.123.109-.123c.55-.627,1.377-1.026,2.302-1.026.472,0,.916.107,1.313.291l-2.579-2.909c-.299-.338-.723-.507-1.146-.507Z" fill="#0294e4"/>
+  <polygon points="13.365 10.199 13.365 10.199 13.365 10.199 9.001 5.276 9.001 12.926 13.365 10.199" fill="#96bcc2"/>
+</svg>
+    `
+  };
+
+  const modules = {
+    defender: {
+      name: 'Microsoft Defender',
+      subtitle: 'Protección contra amenazas en endpoints, identidades, correo, aplicaciones y nube.',
+      features: [
+        { b: '🖥️', t: 'Detección y respuesta de endpoints (EDR) con análisis de comportamiento (Defender for Endpoint).' },
+        { b: '📧', t: 'Protección de correo y colaboración (Defender for Office 365).' },
+        { b: '🪪', t: 'Detección de amenazas y comportamientos riesgosos en identidades (Defender for Identity).' },
+        { b: '🧩', t: 'Visibilidad y control de aplicaciones SaaS y shadow IT (Defender for Cloud Apps).' },
+        { b: '☁️', t: 'Defensa de cargas de trabajo multicloud en Azure, AWS y GCP (Defender for Cloud).' },
+        { b: '🔎', t: 'Investigación y respuesta automatizada (AIR), con alertas correlacionadas en una única consola XDR.' }
+      ]
+    },
+    purview: {
+      name: 'Microsoft Purview',
+      subtitle: 'Gobernanza, cumplimiento y protección de la información.',
+      features: [
+        { b: '📂', t: 'Clasificación y etiquetado automático de datos sensibles (Information Protection).' },
+        { b: '🚫', t: 'Prevención de pérdida de datos (DLP) en correo, Teams, endpoints y nube.' },
+        { b: '🗺️', t: 'Mapa de datos y catálogo unificado (Data Map y Unified Catalog).' },
+        { b: '⚖️', t: 'Evaluación y seguimiento del cumplimiento normativo (GDPR, HIPAA, ISO, etc.) con Compliance Manager.' },
+        { b: '🕵️', t: 'Auditoría y gestión del ciclo de vida de la información (Audit y Data Lifecycle Management).' }
+      ]
+    },
+    intune: {
+      name: 'Microsoft Intune',
+      subtitle: 'Gestión unificada de dispositivos y aplicaciones (MDM/MAM).',
+      features: [
+        { b: '💻', t: 'Administración de dispositivos Windows, macOS, iOS, Android y Linux.' },
+        { b: '📱', t: 'Gestión de aplicaciones móviles (MAM) sin inscripción del dispositivo.' },
+        { b: '✅', t: 'Políticas de cumplimiento cuyo estado alimenta el acceso condicional de Entra ID.' },
+        { b: '🔒', t: 'Protección de datos corporativos en dispositivos personales (BYOD).' },
+        { b: '🔄', t: 'Implementación automática de actualizaciones y configuraciones.' }
+      ]
+    },
+    entra: {
+      name: 'Microsoft Entra ID',
+      subtitle: 'Gestión de identidades y accesos en la nube.',
+      features: [
+        { b: '🔑', t: 'Autenticación multifactor (MFA) y acceso condicional.' },
+        { b: '👤', t: 'Gestión de identidades y grupos; la automatización del ciclo de vida requiere Entra ID Governance.' },
+        { b: '🤝', t: 'Identidad híbrida y federada con inicio de sesión único (SSO) a aplicaciones en la nube y locales.' },
+        { b: '⚠️', t: 'Protección de identidades basada en riesgo (ID Protection, requiere licencia P2).' },
+        { b: '🔐', t: 'Acceso sin contraseña (FIDO2, Windows Hello for Business, Authenticator).' }
+      ]
+    }
+  };
+
+  function renderModule(key){
+    const m = modules[key];
+    if (!m) return;
+    panel.innerHTML = `
+      <div class="info-icon">${icons[key]}</div>
+      <h2>${m.name}</h2>
+      <div class="subtitle">${m.subtitle}</div>
+      <ul>
+        ${m.features.map(f => `<li><span class="bullet">${f.b}</span><span>${f.t}</span></li>`).join('')}
+      </ul>
+    `;
+  }
+
+  document.querySelectorAll('.node').forEach(node => {
+    node.addEventListener('click', () => {
+      document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
+      node.classList.add('active');
+      renderModule(node.dataset.module);
+    });
+  });
+})();
+</script>
+</body>
+</html>
